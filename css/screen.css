@@ -1,0 +1,16 @@
+body, html{
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.container{
+    background: #aaf;
+}
+
+ul{
+    padding-left: 15px;
+}
+ul li {
+    list-style: none;
+}
