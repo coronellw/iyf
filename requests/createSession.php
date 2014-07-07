@@ -1,5 +1,5 @@
 <?php
-
+session_start(); 
 include '../db_info.php';
 include '../validations.php';
 
@@ -18,9 +18,8 @@ $user = mysqli_fetch_array($result);
 $count = mysqli_num_rows($result);
 
 if ($count > 0) {
-    session_start(); 
     $_SESSION['user'] = $user;
-    //header("Location: ../index.php");
+    header("Location: /iyf/index.php");
     echo json_encode($user);
 } else {
     echo "fail";

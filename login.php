@@ -15,16 +15,18 @@
 
         <div class="container">
             <div class="form-signin" >
-                <h2 class="form-signin-heading">Por favor ingrese...</h2>
-                <input type="username" id="username" class="form-control" placeholder="Nombre de usuario" required autofocus>
-                <input type="password" id="password" class="form-control" placeholder="Contraseña" required>
+                <form action="requests/createSession.php" method="post">
+                    <h2 class="form-signin-heading">Por favor ingrese...</h2>
+                    <input type="username" id="username" name="username" class="form-control" placeholder="Nombre de usuario" required autofocus>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Contraseña" required>
 
-                <a href="#" class="btn btn-lg btn-primary btn-sm" onclick="requestLogin();">
-                    Ingresar
-                </a>
-                <a href="#" class="btn btn-lg btn-primary btn-sm" onclick="window.location.href = 'registration.php'">
-                    Registrarse
-                </a>
+                    <button type="submit" class="btn btn-lg btn-primary btn-sm">
+                        Ingresar
+                    </button>
+                    <a href="#" class="btn btn-lg btn-primary btn-sm" onclick="window.location.href = 'registration.php'">
+                        Registrarse
+                    </a>
+                </form>
             </div>
         </div>
     </body>
