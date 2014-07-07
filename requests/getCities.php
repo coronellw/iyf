@@ -13,7 +13,7 @@ $cities = $link->query($query);
 <?php
 while ($city = mysqli_fetch_array($cities)) {
     ?>
-    <option <?php echo $city['id_city'] ?>>
+    <option value="<?php echo $city['id_city'] ?>">
         <?php echo $city['name'] ?>
     </option>
     <?php

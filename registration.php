@@ -30,7 +30,7 @@
         <script>
             root = <?php echo $root; ?>;
             jQuery(function() {
-                jQuery('#birthdate').mask('99/99/9999', {placeholder: " "});
+                jQuery('#birthdate').mask('9999/99/99', {placeholder: " "});
             })
 
         </script>
@@ -96,7 +96,7 @@
                                     <label>Fecha de nacimiento: </label>
                                 </td>
                                 <td>
-                                    <input id="birthdate" type="date" placeholder="DD/MM/YYYY" >
+                                    <input id="birthdate" type="date" placeholder="YYYY/MM/DD" >
                                 </td>
                             </tr>
 
@@ -181,7 +181,7 @@
                                     <select id="hq">
                                         <option value='null'>---</option>
                                         <?php while ($hq = mysqli_fetch_array($hqs)) { ?>
-                                            <option value="<?php echo $hq['id_headquarters'] ?>"><?php echo $hq['name'] ?></option>
+                                            <option value="<?php echo $hq['id_headquarter'] ?>"><?php echo $hq['name'] ?></option>
                                         <?php } ?>
                                     </select>
                                 </td>
@@ -274,6 +274,7 @@
                             </tr>
                         </table>
 
+                        <?php if (isset($_SESSION['user'])) { ?>
                         <input type="checkbox" onclick="toggleAccountInfo();" > Habilitar usuario de sistema
 
                         <div id="account_info" style="display: none">
@@ -295,7 +296,7 @@
                                     <td>
                                         <select id="usertype">
                                             <?php while ($usertype = mysqli_fetch_array($usertypes)) { ?>
-                                                <option id="<?php echo $usertype['id_usertype'] ?>" >
+                                                <option value="<?php echo $usertype['id_usertype'] ?>" >
                                                     <?php echo $usertype['name'] ?>
                                                 </option>
                                             <?php } ?>
@@ -322,6 +323,7 @@
                                 </tr>
                             </table>
                         </div>
+                        <?php } ?>
                     </span>
 
                     <span class="row">

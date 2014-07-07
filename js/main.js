@@ -95,20 +95,24 @@ function requestRegistration() {
     var id_publicity = get("publicity").value;
     var hosted = jQuery('input[name="hosted"]:checked').val();
     var assistance = jQuery('input[name="assistance"]:checked').val();
-    var price = get("price").value;
+    var price = get("price").innerHTML;
+    var username = get("username").value;
+    var usertype = get("usertype").value;
+    var password = get("password").value;
     var url = root + "requests/createUser.php"
 
     console.log("{\nname: " + name + ",\nparent_name: " + parent_name + ",\nmaternal_name:" + maternal_name + ",\nemail: "
             + email + ",\ngenre: " + genre + ",\neducation: " + scholarity + ",\nid_country: " + id_country +
-            ",\nid_city:" + id_city + ",\nid_hq: " + id_hq + ",\nemail" + email + ",\nid_modality: " + id_modality +
+            ",\nid_city:" + id_city + ",\nid_hq: " + id_hq + ",\nemail: " + email + ",\nid_modality: " + id_modality +
             ",\nid_publicity: " + id_publicity + ",\nhosted: " + hosted + ",\nassistance: " + assistance +
-            ",\nprice" + price + "\n}");
+            ",\nprice: " + price + ",\nusername: " + username + ",\nusertype: " + usertype + "\npassword: " + password + "\n}");
     jQuery.ajax({
         type: "POST",
         url: url,
         data: {name: name, parent_name: parent_name, maternal_name: maternal_name, genre: genre, born: birthdate,
             scholarity: scholarity, contacts: contacts, id_country: id_country, id_city: id_city, id_hq: id_hq, email: email,
-            id_modality: id_modality, id_publicity: id_publicity, hosted: hosted, assistance: assistance, pirce: price}
+            id_modality: id_modality, id_publicity: id_publicity, hosted: hosted, assistance: assistance, price: price,
+            username: username, id_usertype: usertype, password: password}
     }).success(function() {
         console.log("The user was saved on the data base");
     }).fail(function() {
@@ -176,6 +180,23 @@ function recalcPrice() {
     get("price").innerHTML = price;
 }
 
-function mask() {
-    jQuery("#birthdate").mask("99/99/9999");
+function requestLogin() {
+    var username = get("username").value;
+    var password = get("password").value;
+    var url = "requests/createSession.php";
+
+    console.log("requesting login for user " + username + " and btw the url is " + url);
+
+    jQuery.ajax({
+        type: "POST",
+        url: url,
+        data: {username: username, password: password}
+    }).success(function(data) {
+        if (data !== "fail") {
+            window.location.href = "index.php";
+            console.dir(data);
+        } else {
+            console.log("Error, invalid credentials.");
+        }
+    });
 }
