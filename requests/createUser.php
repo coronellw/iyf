@@ -51,6 +51,10 @@ function deterUsertype($tipo_usuario) {
     }
 }
 
+function deterAssistance($assistance) {
+    return $assistance === '1' ? $assistance : 0;
+}
+
 $query = "INSERT INTO `IYF`.`users`
 (`names`,`parent_names`,`genre`,`born`,`email`,`scolarship`,`assistance`,
 `id_group`,`usrnm`,`id_usertype`,`id_modality`,`registered`,`id_country`,`psswrd`,
@@ -62,7 +66,7 @@ VALUES(
 " . parseString($born) . ",
 " . parseString($email) . ",
 " . $id_scholarity . ",
-" . parseString($assistance) . ",
+" . deterAssistance($assistance) . ",
 " . deterGroup() . ",
 " . deterUsername($username) . ",
 " . deterUsertype($id_usertype) . ",
@@ -77,7 +81,6 @@ NOW(),
 " . parseString($price) . ",
 " . parseString($maternal_name) . ");";
 
-echo $query . "\n";
 $users = $link->query($query);
 
 $id_user = mysqli_insert_id($link);
@@ -89,13 +92,18 @@ if ($id_user !== 0 && count($contacts) > 0) {
         $contact = $contacts[$i];
 
         $current_query = $partial_query . "(" . $contact['type'] . ", " . parseString($contact['value']) . ");";
-        //echo $current_query . "\n";
         $result = $link->query($current_query);
         $id_contact = mysqli_insert_id($link);
         if ($id_contact !== 0) {
             $query = "INSERT INTO contact_user(id_contact, id_user) VALUES (" . $id_contact . ", " . $id_user . ");";
-            //echo $query . "\n";
             $result = $link->query($query);
         }
     }
+}
+
+if ($id_user !== 0) {
+    echo "ok";
+} else {
+    echo $query . "\n";
+    echo "fail";
 }

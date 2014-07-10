@@ -1,5 +1,4 @@
-<?php ini_set('session.gc_maxlifetime', 100000);
-session_start(); ?>
+<?php session_start(); ?>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="/iyf/css/bootstrap.min.css" rel="stylesheet" />

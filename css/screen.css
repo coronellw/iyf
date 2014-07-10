@@ -5,7 +5,7 @@ body, html{
 }
 
 .container{
-    // background: #aaf;
+    background: #aaf;
 }
 
 ul{
@@ -13,4 +13,34 @@ ul{
 }
 ul li {
     list-style: none;
+}
+
+#logo{
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.header-logo{
+    border-radius: 60px;
+    overflow: hidden;
+    width: 72px;
+    height: 72px;
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+
+table, table tbody td, table tbody tr{
+    /*border: 1px solid black;*/
+}
+
+table tbody td, table thead th{
+    padding: 0 5px;
+    text-align: center;
+}
+
+
+table.style, table.style tbody td, table.style tbody tr{
+    border: 1px solid black;
 }

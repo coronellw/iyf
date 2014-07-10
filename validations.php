@@ -7,3 +7,11 @@ function parseString($param) {
         return "'" . $param . "'";
     }
 }
+
+function createMsg($msg, $type, $title){
+   return array(
+       "message"=>$msg,
+       "type"=>$type,
+       "title"=>$title
+   );
+}

@@ -5,11 +5,16 @@
     </head>
     <body>
         <div class="container">
-            <?php include './template/navbar.php' ?>
             <?php
-            echo 'This is what the $_session has<br><pre>';
-            var_dump($_SESSION);
-            echo '</pre>';
+            include './template/navbar.php';
+            if (isset($_SESSION['user'])) {
+                echo $_SESSION['user']['names'];
+            } else {
+                ?>
+            <h3>Que es IYF?</h3>
+            <p>IYF es...</p>
+                <?php
+            }
             ?>
         </div>
     </body>

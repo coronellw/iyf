@@ -1,14 +1,3 @@
-<?php
-function closeSession() {
-    if (isset($_SESSION['user'])) {
-        unset($_SESSION['user']);
-    }
-}
-
-echo '<pre>';
-var_dump($_SESSION);
-echo '</pre>';
-?>
 <nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -19,15 +8,19 @@ echo '</pre>';
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/iyf/index.php">IYF</a>
+            <h1 class="header-logo" id="logo">
+                <a class="navbar-brand" href="/iyf/index.php">
+                    <img src="/iyf/img/logo1.png" />
+                </a>
+            </h1>            
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
-<?php if (isset($_SESSION['user'])) { ?>
-                    <li><a href="#">Registro</a></li>
-                    <li><a href="#">Pagos</a></li>
+                <?php if (isset($_SESSION['user'])) { ?>
+                    <li><a href="/iyf/registration.php">Registro</a></li>
+                    <li><a href="/iyf/payments/">Pagos</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Consultas <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
@@ -42,19 +35,47 @@ echo '</pre>';
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    <?php echo $_SESSION['user']['names']; ?> <span class="caret"></span>
+                            <?php echo $_SESSION['user']['names']; ?> <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="#">Perfil</a></li>
                             <li><a href="#">Otros</a></li>
                             <li class="divider"></li>
-                            <li><a href="login.php" onclick="<?php closeSession(); ?>">Salir</a></li>
+                            <li><a href="/iyf/login.php" onclick="logout();">Salir</a></li>
                         </ul>
                     </li>
-<?php } else { ?>
-                    <li><a href="login.php">Login</a></li>
+                <?php } else { ?>
+                    <li><a href="/iyf/login.php">Login</a></li>
                 <?php } ?>
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
+<div id="alerts">
+    <?php
+    if (isset($_SESSION['messages'])) {
+        for ($i = 0; $i < count($_SESSION['messages']); $i++) {
+            $message = $_SESSION['messages'][$i];
+            ?>
+            <div class="alert alert-dismissible alert-<?php echo $message['type'] ?>">
+                <button type="button" class="close" data-dismiss="alert">
+                    <span aria-hidden="true">
+                        &times;
+                    </span>
+                    <span class="sr-only">
+                        Close
+                    </span>
+                </button>
+                <strong>
+                    <?php echo $message['title']; ?>
+                </strong>
+                <span class="alert-content">
+                    <?php echo $message['message']; ?>
+                </span>
+            </div>
+            <?php
+        }
+        unset($_SESSION['messages']);
+    }
+    ?>
+</div>

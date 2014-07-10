@@ -3,11 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/opt/lampp/htdocs/iyf/requests/getCities.php</file>
+            <file>file:/opt/lampp/htdocs/iyf/requests/createSession.php</file>
+            <file>file:/opt/lampp/htdocs/iyf/requests/getPayments.php</file>
+            <file>file:/opt/lampp/htdocs/iyf/requests/getUser.php</file>
             <file>file:/opt/lampp/htdocs/iyf/js/main.js</file>
             <file>file:/opt/lampp/htdocs/iyf/template/_head.php</file>
-            <file>file:/opt/lampp/htdocs/iyf/index.php</file>
-            <file>file:/opt/lampp/htdocs/iyf/requests/createUser.php</file>
+            <file>file:/opt/lampp/htdocs/iyf/payments/index.php</file>
+            <file>file:/opt/lampp/htdocs/iyf/css/screen.css</file>
+            <file>file:/opt/lampp/htdocs/iyf/template/navbar.php</file>
         </group>
     </open-files>
 </project-private>

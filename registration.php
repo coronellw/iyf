@@ -14,7 +14,11 @@
         $contacts_type_query = "SELECT * FROM contact_type;" or die("Error " . mysqli_error($link));
         $contact_types = $link->query($contacts_type_query);
 
-        $modalities_query = "SELECT * FROM modalities;" or die("Error " . mysqli_error($link));
+        if (!isset($_SESSION['user'])) {
+            $modalities_query = "SELECT * FROM modalities WHERE admin_required = 0;" or die("Error " . mysqli_error($link));
+        } else {
+            $modalities_query = "SELECT * FROM modalities;" or die("Error " . mysqli_error($link));
+        }
         $modalities = $link->query($modalities_query);
 
         $usertypes_query = "SELECT * FROM usertypes;" or die("Error " . mysqli_error($link));
@@ -39,7 +43,7 @@
         <div class="container">
             <?php include './template/navbar.php'; ?>
             <center>
-                <form>
+                <form id="form">
                     <h1>Registro de usuarios</h1>
                     <h2>Llene los campos para hacer el registro de un usuario</h2>
                     <span class="row">
@@ -175,7 +179,7 @@
 
                             <tr>
                                 <td>
-                                    <label>Sede: </label>
+                                    <label>Sede más cercana: </label>
                                 </td>
                                 <td>
                                     <select id="hq">
@@ -244,25 +248,26 @@
                                     </div>
                                 </td>
                             </tr>
+                            <?php if (isset($_SESSION['user']) && ($_SESSION['user']['id_usertype'] < 3)) { ?>
+                                <tr>
+                                    <td>
+                                        <label>Asistencia aprobada: </label>
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <input type="radio" value="1" name ="assistance">
+                                            </span>
+                                            <span class="form-control" >Si</span>
 
-                            <tr>
-                                <td>
-                                    <label>Asistencia aprobada: </label>
-                                </td>
-                                <td>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <input type="radio" value="1" name ="assistance">
-                                        </span>
-                                        <span class="form-control" >Si</span>
-
-                                        <span class="input-group-addon">
-                                            <input type="radio" value="0" checked name ="assistance" > 
-                                        </span>
-                                        <span class="form-control">No</span>
-                                    </div>
-                                </td>
-                            </tr>
+                                            <span class="input-group-addon">
+                                                <input type="radio" value="0" checked name ="assistance" > 
+                                            </span>
+                                            <span class="form-control">No</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php } ?>
 
                             <tr>
                                 <td>
@@ -275,54 +280,54 @@
                         </table>
 
                         <?php if (isset($_SESSION['user'])) { ?>
-                        <input type="checkbox" onclick="toggleAccountInfo();" > Habilitar usuario de sistema
+                            <input type="checkbox" onclick="toggleAccountInfo();" > Habilitar usuario de sistema
 
-                        <div id="account_info" style="display: none">
-                            <table>
-                                <tr rowspan="2" ><h3>Informacion de cuenta</h3></tr>
+                            <div id="account_info" style="display: none">
+                                <table>
+                                    <tr rowspan="2" ><h3>Informacion de cuenta</h3></tr>
 
-                                <tr>
-                                    <td>
-                                        <label>Nombre de usuario: </label>
-                                    </td>
-                                    <td>
-                                        <input id="username" type="text" >
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label>tipo de usuario: </label>
-                                    </td>
-                                    <td>
-                                        <select id="usertype">
-                                            <?php while ($usertype = mysqli_fetch_array($usertypes)) { ?>
-                                                <option value="<?php echo $usertype['id_usertype'] ?>" >
-                                                    <?php echo $usertype['name'] ?>
-                                                </option>
-                                            <?php } ?>
-                                        </select>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>
+                                            <label>Nombre de usuario: </label>
+                                        </td>
+                                        <td>
+                                            <input id="username" type="text" >
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <label>tipo de usuario: </label>
+                                        </td>
+                                        <td>
+                                            <select id="usertype">
+                                                <?php while ($usertype = mysqli_fetch_array($usertypes)) { ?>
+                                                    <option value="<?php echo $usertype['id_usertype'] ?>" >
+                                                        <?php echo $usertype['name'] ?>
+                                                    </option>
+                                                <?php } ?>
+                                            </select>
+                                        </td>
+                                    </tr>
 
-                                <tr>
-                                    <td>
-                                        <label>Contrase&ntilde;a: </label>
-                                    </td>
-                                    <td>
-                                        <input id="password" type="password" >
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>
+                                            <label>Contrase&ntilde;a: </label>
+                                        </td>
+                                        <td>
+                                            <input id="password" type="password" >
+                                        </td>
+                                    </tr>
 
-                                <tr>
-                                    <td>
-                                        <label>Repetir contrase&ntilde;a: </label>
-                                    </td>
-                                    <td>
-                                        <input id="password_confirmation" type="password" >
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+                                    <tr>
+                                        <td>
+                                            <label>Repetir contrase&ntilde;a: </label>
+                                        </td>
+                                        <td>
+                                            <input id="password_confirmation" type="password" >
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                         <?php } ?>
                     </span>
 

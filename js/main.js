@@ -96,9 +96,9 @@ function requestRegistration() {
     var hosted = jQuery('input[name="hosted"]:checked').val();
     var assistance = jQuery('input[name="assistance"]:checked').val();
     var price = get("price").innerHTML;
-    var username = get("username").value;
-    var usertype = get("usertype").value;
-    var password = get("password").value;
+    var username = jQuery("#username").val();
+    var usertype = jQuery("usertype").val();
+    var password = jQuery("password").val();
     var url = root + "requests/createUser.php"
 
     console.log("{\nname: " + name + ",\nparent_name: " + parent_name + ",\nmaternal_name:" + maternal_name + ",\nemail: "
@@ -113,8 +113,15 @@ function requestRegistration() {
             scholarity: scholarity, contacts: contacts, id_country: id_country, id_city: id_city, id_hq: id_hq, email: email,
             id_modality: id_modality, id_publicity: id_publicity, hosted: hosted, assistance: assistance, price: price,
             username: username, id_usertype: usertype, password: password}
-    }).success(function() {
-        console.log("The user was saved on the data base");
+    }).success(function(data) {
+        if (data === "ok") {
+            console.log("The user was saved on the data base");
+            get("form").reset();
+            get("alerts").innerHTML = '<div class="alert alert-success" role="alert">El usuario fue creado satisfactoriamente</div>';
+        } else {
+            get("alerts").innerHTML = '<div class="alert alert-danger" role="alert">El usuario no pudo ser creado en la base de datos, verifique su información</div>';
+        }
+
     }).fail(function() {
         console.log("There was an error while performing this operation")
     });
@@ -194,9 +201,86 @@ function requestLogin() {
     }).success(function(data) {
         if (data !== "fail") {
             window.location.href = "index.php";
-            console.dir(data);
         } else {
             console.log("Error, invalid credentials.");
+        }
+    });
+}
+
+function logout() {
+    var url = "requests/destroySession.php";
+    jQuery.ajax({
+        type: "POST",
+        url: url
+    }).success(function(data) {
+        if (data === "ok") {
+            window.location.href = "/iyf/login.php";
+        }
+    });
+}
+
+function successMsg(msg) {
+    var closeable = '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
+    get("alerts").innerHTML = '<div class="alert alert-success alert-dismissible" role="alert">' + closeable + msg + '</div>';
+}
+function warningMsg(msg) {
+    var closeable = '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
+    get("alerts").innerHTML = '<div class="alert alert-warning alert-dismissible" role="alert">' + closeable + msg + '</div>';
+}
+function errorMsg(msg) {
+    var closeable = '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
+    get("alerts").innerHTML = '<div class="alert alert-danger alert-dismissible" role="alert">' + closeable + msg + '</div>';
+}
+function infoMsg(msg) {
+    var closeable = '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
+    get("alerts").innerHTML = '<div class="alert alert-info alert-dismissible" role="alert">' + closeable + msg + '</div>';
+}
+
+function findUser() {
+    var id_user = jQuery("#user_id").val();
+    var url = "/iyf/requests/getUser.php";
+    jQuery.ajax({
+        type: "GET",
+        url: url,
+        data: {id_user: id_user, format: "json"}
+    }).success(function(data) {
+        if (data !== "fail") {
+            var jsondata = JSON.parse(data);
+            get("names").innerHTML = jsondata.names;
+            get("parent").innerHTML = jsondata.parent_names;
+            get("maternal").innerHTML = jsondata.maternal_name;
+            get("country").innerHTML = jsondata.country_name;
+            get("pays").innerHTML = jsondata.pays;
+            get("paid").innerHTML = jsondata.paid;
+            get("pending").innerHTML = jsondata.pending;
+
+            if (jsondata.assistance === '1') {
+                jQuery("#assistance").innerHTML = "REVOCAR ASISTENCIA";
+            } else {
+                jQuery("#assistance").innerHTML = "APROBAR ASISTENCIA";
+            }
+
+            jQuery.ajax({
+                type: "GET",
+                url: "/iyf/requests/getPayments.php",
+                data: {id_user: jsondata.id_user}
+            }).success(function(data){
+                console.dir(data);
+                get("payments").innerHTML = data;
+            });
+        } else {
+            errorMsg("Usuario no encontrado");
+            get("names").innerHTML = "";
+            get("parent").innerHTML = "";
+            get("maternal").innerHTML = "";
+            get("country").innerHTML = "";
+            get("pays").innerHTML = "";
+            get("paid").innerHTML = "";
+            get("pending").innerHTML = "";
+            get("payments").innerHTML = "";
+            var timeout = setTimeout(function() {
+                jQuery(".close").click();
+            }, 2500);
         }
     });
 }
