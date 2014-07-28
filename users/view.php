@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <html>
     <head>
         <title>IYF - Imprimir volante</title>
@@ -7,19 +8,19 @@
         ?>
     </head>
     <body>
-        <div class="container">
+        <div class="container-fluid">
             <?php
             include '../template/navbar.php';
-            if (isset($_SESSION['user'])) {
-                
-                $id_user = filter_input(INPUT_GET, "user");
-                $query = "SELECT u.id_user, u.names, u.parent_names, u.maternal_name, c.name as 'pais', h.name as 'sede' FROM "
-                        . "users u, countries c, headquarters h  WHERE "
-                        . "u.id_country = c.id_country AND u.id_headquarters = h.id_headquarter AND id_user=" . $id_user;
-                $result = $link->query($query);
-                $user = mysqli_fetch_array($result);
 
-                //$barcode = new HttpRequest("../requests/generateBarcode.php?user=".$user['id_user'], HttpRequest::METH_GET);
+
+            $id_user = filter_input(INPUT_GET, "user");
+            $query = "SELECT u.id_user, u.names, u.parent_names, u.maternal_name, c.name as 'pais', h.name as 'sede' FROM "
+                    . "users u, countries c, headquarters h  WHERE "
+                    . "u.id_country = c.id_country AND u.id_headquarters = h.id_headquarter AND id_user=" . $id_user;
+            $result = $link->query($query);
+            $user = mysqli_fetch_array($result);
+
+            if (mysqli_num_rows($result) > 0) {
                 ?>
                 <center>
                     <table class="">
@@ -107,10 +108,13 @@
                     <br>
                     <br>
                 </center>
-                <?php
-            } else {
-                include '../forbidden.php';
-            }
+            <?php } else {
+                ?>
+            <center>
+                <h2>Error</h2>
+                <p>El usuario especificado no existe en la base de datos, verifique su informacion por favor.</p>
+            </center>
+                <?php }
             ?>
         </div>
     </body>

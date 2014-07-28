@@ -27,17 +27,17 @@ if ($count > 0) {
             . "FROM "
             . "users u, payments p, payment_user pu, payment_type pt "
             . "WHERE "
-            . "u.id_user = pu.id_user AND p.id_payment = pu.id_payment AND p.id_payment_type = pt.id_pyament_type AND "
+            . "u.id_user = pu.id_user AND p.id_payment = pu.id_payment AND p.id_payment_type = pt.id_payment_type AND "
             . "pu.id_user =" . $user['id_user'] . ";" or die("Error " . mysqli_error($link));
 
     $resume_result = $link->query($payments_resume);
     if (mysqli_num_rows($resume_result) > 0) {
         $resume = mysqli_fetch_array($resume_result);
-        $user['pending'] = $resume['pago_pendiente'];
-        $user['paid'] = $resume['total_pagos'];
+        $user['pending'] = $resume['pago_pendiente'] === null ? '0' : $resume['pago_pendiente'];
+        $user['paid'] = $resume['total_pagos'] === null ? '0' : $resume['total_pagos'];
     } else {
-        $user['pending'] = 0;
-        $user['paid'] = 0;
+        $user['pending'] = '0';
+        $user['paid'] = '0';
     }
 
     echo json_encode($user);

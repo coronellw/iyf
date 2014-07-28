@@ -1,4 +1,4 @@
-<?php
+<?php session_start(); 
 
 function parseString($param) {
     if ($param === null) {

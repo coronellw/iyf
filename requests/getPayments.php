@@ -9,7 +9,7 @@ $query = "SELECT "
         . " FROM "
         . "users u, payment_user pu, payments p, payment_type pt "
         . "WHERE "
-        . "pu.id_user = u.id_user AND pu.id_payment = p.id_payment AND p.id_payment_type = pt.id_pyament_type"
+        . "pu.id_user = u.id_user AND pu.id_payment = p.id_payment AND p.id_payment_type = pt.id_payment_type"
         . " AND u.id_user = " . $id_user . ";"
         or die("Error " . mysqli_error($link));
 

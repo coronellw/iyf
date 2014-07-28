@@ -36,7 +36,7 @@ function deterPassword($clave) {
 }
 
 function deterUsername($usuario) {
-    if (is_string($usuario) && !is_null($usuario)) {
+    if (is_string($usuario) && (strlen($usuario) > 0)) {
         return "'" . $usuario . "'";
     } else {
         return 'null';
@@ -55,7 +55,7 @@ function deterAssistance($assistance) {
     return $assistance === '1' ? $assistance : 0;
 }
 
-$query = "INSERT INTO `IYF`.`users`
+$query = "INSERT INTO `users`
 (`names`,`parent_names`,`genre`,`born`,`email`,`scolarship`,`assistance`,
 `id_group`,`usrnm`,`id_usertype`,`id_modality`,`registered`,`id_country`,`psswrd`,
 `id_headquarters`,`id_city`,`id_publicity`,`hosted`,`pays`,`maternal_name`)
@@ -101,9 +101,13 @@ if ($id_user !== 0 && count($contacts) > 0) {
     }
 }
 
+$response = array();
+$response['id_user'] = $id_user;
 if ($id_user !== 0) {
-    echo "ok";
+    $response['result'] = "ok";
 } else {
-    echo $query . "\n";
-    echo "fail";
+    $response['result'] = "fail";
+    $response['query'] = $query;
 }
+
+echo json_encode($response);

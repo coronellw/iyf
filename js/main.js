@@ -1,5 +1,6 @@
 var phones = [];
 var mex = false;
+var timeout = 0;
 function get(elem) {
     return document.getElementById(elem);
 }
@@ -99,13 +100,13 @@ function requestRegistration() {
     var username = jQuery("#username").val();
     var usertype = jQuery("usertype").val();
     var password = jQuery("password").val();
-    var url = root + "requests/createUser.php"
+    var url = "/requests/createUser.php";
 
     console.log("{\nname: " + name + ",\nparent_name: " + parent_name + ",\nmaternal_name:" + maternal_name + ",\nemail: "
             + email + ",\ngenre: " + genre + ",\neducation: " + scholarity + ",\nid_country: " + id_country +
             ",\nid_city:" + id_city + ",\nid_hq: " + id_hq + ",\nemail: " + email + ",\nid_modality: " + id_modality +
             ",\nid_publicity: " + id_publicity + ",\nhosted: " + hosted + ",\nassistance: " + assistance +
-            ",\nprice: " + price + ",\nusername: " + username + ",\nusertype: " + usertype + "\npassword: " + password + "\n}");
+            ",\nprice: " + price + ",\nusername: " + username + ",\nusertype: " + usertype + ",\npassword: " + password + "\n}");
     jQuery.ajax({
         type: "POST",
         url: url,
@@ -114,22 +115,25 @@ function requestRegistration() {
             id_modality: id_modality, id_publicity: id_publicity, hosted: hosted, assistance: assistance, price: price,
             username: username, id_usertype: usertype, password: password}
     }).success(function(data) {
-        if (data === "ok") {
+        datos = JSON.parse(data);
+        console.dir(data);
+        if (datos.result === "ok") {
             console.log("The user was saved on the data base");
-            get("form").reset();
-            get("alerts").innerHTML = '<div class="alert alert-success" role="alert">El usuario fue creado satisfactoriamente</div>';
+            location.href="/users/view.php?user="+datos.id_user;
+//            get("form").reset();
+//            get("alerts").innerHTML = '<div class="alert alert-success" role="alert">El usuario fue creado satisfactoriamente, <br>imprima su comprobante  <a href="/users/view.php?user=' + datos.id_user + '">aquí</a></div>';
         } else {
             get("alerts").innerHTML = '<div class="alert alert-danger" role="alert">El usuario no pudo ser creado en la base de datos, verifique su información</div>';
         }
 
     }).fail(function() {
-        console.log("There was an error while performing this operation")
+        console.log("There was an error while performing this operation");
     });
 }
 
 function updateStates() {
     var id_country = get("country").value;
-    var url = root + "requests/getStates.php";
+    var url = "/requests/getStates.php";
     var options = document.getElementsByName("hosted");
     mex = id_country === 'MEX' ? true : false;
 
@@ -159,7 +163,7 @@ function updateStates() {
 function updateCities() {
     var state = get("state").value;
     var id_country = get("country").value;
-    var url = root + "requests/getCities.php";
+    var url = "/requests/getCities.php";
     jQuery.ajax({
         type: 'POST',
         url: url,
@@ -175,12 +179,12 @@ function recalcPrice() {
     var hosted = jQuery('input[name="hosted"]:checked').val();
     var price = 0;
     if (!mex) {
-        price = "90";
+        price = "780";
     } else {
         if (hosted === '1') {
-            price = "45";
+            price = "700";
         } else {
-            price = "25";
+            price = "350";
         }
     }
 
@@ -253,22 +257,31 @@ function findUser() {
             get("pays").innerHTML = jsondata.pays;
             get("paid").innerHTML = jsondata.paid;
             get("pending").innerHTML = jsondata.pending;
+            get("register_payment").href = "create.php?user=" + jsondata.id_user;
+            jQuery("#assistance").click(function() {
+                changeAssistance(jsondata.id_user);
+            });
 
             if (jsondata.assistance === '1') {
-                jQuery("#assistance").innerHTML = "REVOCAR ASISTENCIA";
+                jQuery("#assistance").html("REVOCAR ASISTENCIA");
+                get("can_assist").innerHTML = "Si";
+                get("register_payment").style.display = "none";
             } else {
-                jQuery("#assistance").innerHTML = "APROBAR ASISTENCIA";
+                jQuery("#assistance").html("APROBAR ASISTENCIA");
+                get("can_assist").innerHTML = "No";
+                get("register_payment").style.display = "inline-block";
             }
 
             jQuery.ajax({
                 type: "GET",
                 url: "/iyf/requests/getPayments.php",
                 data: {id_user: jsondata.id_user}
-            }).success(function(data){
-                console.dir(data);
+            }).success(function(data) {
+                //console.dir(data);
                 get("payments").innerHTML = data;
             });
         } else {
+            window.clearTimeout(timeout);
             errorMsg("Usuario no encontrado");
             get("names").innerHTML = "";
             get("parent").innerHTML = "";
@@ -277,10 +290,66 @@ function findUser() {
             get("pays").innerHTML = "";
             get("paid").innerHTML = "";
             get("pending").innerHTML = "";
+            get("can_assist").innerHTML = "";
             get("payments").innerHTML = "";
-            var timeout = setTimeout(function() {
+            get("register_payment").href = "#";
+
+            timeout = setTimeout(function() {
                 jQuery(".close").click();
             }, 2500);
+        }
+    });
+}
+
+function makePayment(options) {
+    var registered_by = options.registered_by;
+    var registered_to = options.registered_to;
+    var total_payment = options.total_payment;
+
+    var payment = get("amount").value;
+    var payment_method = get("payment_method").value;
+    var msg = "El pago es valido";
+
+    if ((parseFloat(payment) > parseFloat(options.pending)) || (isNaN(payment))) {
+        msg = "El pago es invalido";
+        alert("El monto a cancelar excede al saldo pendiente, corrija su transacción e intente de nuevo");
+    } else {
+        jQuery.ajax({
+            type: "POST",
+            url: "/iyf/requests/createPayment.php",
+            data: {payer: registered_to,
+                amount: payment,
+                payment_type: payment_method,
+                registerer: registered_by}
+        }).success(function() {
+            location.reload();
+            console.log("Transaction complete");
+        });
+    }
+
+    console.log(msg +
+            "\nRegistrado por : " + registered_by +
+            "\nRegistrado para : " + registered_to +
+            "\nCantidad : " + payment +
+            "\nMetodo : " + payment_method +
+            "\nA pagar : " + total_payment +
+            "\nPendiente : " + options.pending +
+            "\nDiferencia : " + dif
+            );
+}
+
+function changeAssistance(id_user) {
+    jQuery.ajax({
+        type: "POST",
+        url: "/iyf/requests/toggleAssistance.php",
+        data: {id_user: id_user}
+    }).success(function(data) {
+        if (data === "ok") {
+            console.log("Assistance updated!");
+            var assistance = jQuery("#can_assist").html() === "Si" ? "No" : "Si";
+            jQuery("#can_assist").html(assistance);
+            var assistance = assistance === "Si" ? "REVOCAR ASISTENCIA" : "APROBAR ASISTENCIA";
+            jQuery("#assistance").html(assistance);
         }
     });
 }

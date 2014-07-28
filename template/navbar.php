@@ -10,7 +10,7 @@
             </button>
             <h1 class="header-logo" id="logo">
                 <a class="navbar-brand" href="/iyf/index.php">
-                    <img src="/iyf/img/logo1.png" />
+                    <img src="/img/logo1.png" />
                 </a>
             </h1>            
         </div>
@@ -19,8 +19,8 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                 <?php if (isset($_SESSION['user'])) { ?>
-                    <li><a href="/iyf/registration.php">Registro</a></li>
-                    <li><a href="/iyf/payments/">Pagos</a></li>
+                    <li><a href="/registration.php">Registro</a></li>
+                    <li><a href="/payments/">Pagos</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Consultas <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
@@ -41,11 +41,11 @@
                             <li><a href="#">Perfil</a></li>
                             <li><a href="#">Otros</a></li>
                             <li class="divider"></li>
-                            <li><a href="/iyf/login.php" onclick="logout();">Salir</a></li>
+                            <li><a href="/login.php" onclick="logout();">Salir</a></li>
                         </ul>
                     </li>
                 <?php } else { ?>
-                    <li><a href="/iyf/login.php">Login</a></li>
+                    <li><a href="/login.php">Login</a></li>
                 <?php } ?>
             </ul>
         </div><!-- /.navbar-collapse -->

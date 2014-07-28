@@ -23,10 +23,10 @@ if ($count > 0) {
     $_SESSION['user'] = $user;
     $_SESSION['messages'][] = createMsg("Bienevenido usuario " . $user['names'], "success", "IYF");
 
-    header("Location: /iyf/index.php");
+    header("Location: /index.php");
     echo json_encode($user);
 } else {
     $_SESSION['messages'][] = createMsg("Sus credenciales no son validas, intente nuevamente.", "danger", "IYF");
-    header("Location: /iyf/login.php");
+    header("Location: /login.php");
     echo "fail";
 }

@@ -1,9 +1,8 @@
-<?php 
+<?php
+//$hst = "68.178.216.177";
 $hst = "localhost:3306";
-$usrnm = "IYF";
-$psswrd = "$3v3n_T1m3s";
+$usrnm = "iyfevent";
+$psswrd = "S3v3nT1m3s!";
 $schm = "IYF";
-$root = "/iyf/";
-
 $link = mysqli_connect($hst, $usrnm, $psswrd, $schm) or die("Error " . mysqli_error($link));
 $acentos = $link->query("SET NAMES 'utf8'");

@@ -1,10 +1,11 @@
+<?php session_start(); ?>
 <html>
     <head>
         <title>IYF - Index</title>
         <?php include './template/_head.php' ?>
     </head>
     <body>
-        <div class="container">
+        <div class="container-fluid">
             <?php
             include './template/navbar.php';
             if (isset($_SESSION['user'])) {

@@ -34,13 +34,18 @@ ul li {
 table, table tbody td, table tbody tr{
     /*border: 1px solid black;*/
 }
-
-table tbody td, table thead th{
-    padding: 0 5px;
+table thead th{
+    padding: 1px 5px;
     text-align: center;
+}
+
+table tbody td{
+    padding: 2px 5px;
+    text-align: left;
 }
 
 
 table.style, table.style tbody td, table.style tbody tr{
     border: 1px solid black;
+    
 }

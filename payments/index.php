@@ -1,10 +1,11 @@
+<?php session_start(); ?>
 <html>
     <head>
         <title>IYF - Pagos</title>
         <?php include '../template/_head.php' ?>
     </head>
     <body>
-        <div class="container">
+        <div class="container-fluid">
             <center>
                 <?php
                 include '../template/navbar.php';
@@ -13,7 +14,8 @@
                     <h3>Pagos</h3>
                     <p>Por favor ingrese el id de la persona que desea buscar</p>
                     <input id='user_id' onchange='findUser()' >
-
+                    <br>
+                    <br>
                     <table>
                         <tbody>
                             <tr>
@@ -72,20 +74,25 @@
                                     <span id='pending'></span>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>
+                                    <label>Puede asistir:</label>
+                                </td>
+                                <td>
+                                    <span id='can_assist'></span>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <div id='payments'></div>
                     <br>
-                    <?php if (isset($_SESSION['user'])) { ?>
-                        <div class="row">
-                            <a href="#" class="btn btn-primary btn-sm">REGISTRAR PAGOS</a>
-                            <?php if ($_SESSION['user']['id_usertype'] < 3) { ?>
-                                <a href="#" id='assistance' class="btn btn-primary btn-sm">ASISTENCIA</a>
-                            <?php } ?>
-                            <a href="#" class="btn btn-primary btn-sm">EDITAR</a>
-                            <a href="#" class="btn btn-primary btn-sm">CAMBIAR GRUPO</a>
-                        </div>
-                    <?php } ?>
+                    <div class="row">
+                        <a id="register_payment" href="#" class="btn btn-primary btn-sm">REGISTRAR PAGOS</a>
+                        <?php if ($_SESSION['user']['id_usertype'] < 3) { ?>
+                            <a id='assistance' class="btn btn-primary btn-sm">ASISTENCIA</a>
+                        <?php } ?>
+                        <a id="change_group" href="#" class="btn btn-primary btn-sm">CAMBIAR GRUPO</a>
+                    </div>
                     <br>
                     <br>
                     <br>

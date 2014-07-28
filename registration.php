@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <html>
     <head>
         <title>IYF</title>
@@ -30,17 +31,15 @@
         $publicities_query = "SELECT * FROM publicities" or die("Error " . mysqli_error($link));
         $publicities = $link->query($publicities_query)
         ?>
-        <script src="/iyf/js/jquery.maskedinput.js" type="text/javascript"></script>
+        <script src="/js/jquery.maskedinput.js" type="text/javascript"></script>
         <script>
-            root = <?php echo $root; ?>;
             jQuery(function() {
                 jQuery('#birthdate').mask('9999/99/99', {placeholder: " "});
             })
-
         </script>
     </head>
     <body>
-        <div class="container">
+        <div class="container-fluid">
             <?php include './template/navbar.php'; ?>
             <center>
                 <form id="form">
@@ -100,7 +99,7 @@
                                     <label>Fecha de nacimiento: </label>
                                 </td>
                                 <td>
-                                    <input id="birthdate" type="date" placeholder="YYYY/MM/DD" >
+                                    <input id="birthdate" placeholder="YYYY/MM/DD" > (Formato AAAA/MM/DD)
                                 </td>
                             </tr>
 
@@ -274,7 +273,7 @@
                                     <label>Precio: </label>
                                 </td>
                                 <td>
-                                    US$ <span id="price">0</span>
+                                    $<span id="price">0</span> MXN
                                 </td>
                             </tr>
                         </table>

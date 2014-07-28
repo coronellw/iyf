@@ -1,6 +1,6 @@
 <?php
 
-include '/iyf/validations.php';
+include '../validations.php';
 session_start();
 if (isset($_SESSION['user'])) {
     unset($_SESSION['user']);
