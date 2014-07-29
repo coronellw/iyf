@@ -53,3 +53,7 @@ table.style, table.style tbody td, table.style tbody tr{
 select option{
     text-transform: capitalize;
 }
+
+.tiny {
+    font-size: 9px;
+}

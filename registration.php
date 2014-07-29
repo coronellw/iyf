@@ -99,7 +99,7 @@
                                     <label>Fecha de nacimiento: </label>
                                 </td>
                                 <td>
-                                    <input id="birthdate" placeholder="YYYY/MM/DD" > (Formato AAAA/MM/DD)
+                                    <input id="birthdate" placeholder="YYYY/MM/DD" > (Formato <strong>AAAA/MM/DD</strong>)
                                 </td>
                             </tr>
 
@@ -117,7 +117,29 @@
 
                             <tr>
                                 <td>
-                                    <label>Contactos: </label>
+                                    <label>Contacto casa: </label>
+                                </td>
+                                <td>
+                                    <div>
+                                        <input id="home_phone" type="tel" required> 
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label>Contacto celular: </label>
+                                </td>
+                                <td>
+                                    <div>
+                                        <input id="cell_phone" type="tel" required > 
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label>Otros Contactos: </label>
                                 </td>
                                 <td>
                                     <div>
@@ -126,7 +148,7 @@
                                             Agregar
                                         </a>
                                         <br>
-                                        <select id="contact_type" >
+                                        <select id="contact_type" style="margin-top: 2px;" >
                                             <?php while ($contact_type = mysqli_fetch_array($contact_types)) { ?>
                                                 <option value="<?php echo $contact_type['id_contact_type'] ?>">
                                                     <?php echo $contact_type['name'] ?>
@@ -231,7 +253,9 @@
 
                             <tr>
                                 <td>
-                                    <label>Hospedaje: </label>
+                                    <label>Hospedaje:</label>
+                                    <br>
+                                    <span class="tiny">Cambios de acuerdo al reglamento, consultar con sede</span>
                                 </td>
                                 <td>
                                     <div class="input-group">
@@ -330,10 +354,23 @@
                         <?php } ?>
                     </span>
 
+                    <div id="disclaimers">
+                        <span style="text-transform: uppercase">
+                            Por favor leer el <a href="/requests/download.php?filename=REGLAMENTO.docx" target="_blank">reglamento deneral del campamento</a> y marque la siguiente casilla si esta usted de acuerdo
+                        </span>
+                        <br>
+                        <input id='rules' type="checkbox" required/> He leído el reglamento y estoy de acuerdo
+                    </div>
+
                     <span class="row">
                         <a href="#" class="btn btn-primary" onclick="requestRegistration();" >Registrar</a>
                     </span>
                 </form>
+                <div id='privacy_police'>
+                    <span style="text-transform: uppercase">
+                        Si desea conocer nuestra política de privacidad, por favor haga click <a href="/requests/download.php?filename=PRIVACY.pdf" target="_blank">aquí</a>
+                    </span>
+                </div>
             </center>
         </div>
     </body>

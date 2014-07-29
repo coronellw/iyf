@@ -81,17 +81,36 @@ function deletePhone(elem) {
 }
 
 function requestRegistration() {
+    var validations = {};
+    validations = checkRequiredContacts(validations);
     var name = get("names").value;
+
+    if (name.length === 0) {
+        validations.errors.push({msg: "El nombre es obligatorio", title: "Sin nombre"});
+    }
+
     var parent_name = get("parent_name").value;
     var maternal_name = get("maternal_name").value;
     var genre = jQuery('input[name="sex"]:checked').val();
     var birthdate = get("birthdate").value;
+    if (birthdate.length === 0) {
+        validations.errors.push({msg: "Por favor proporcione su fecha de nacimiento", title: "Fecha de nacimiento"});
+    }
     var scholarity = jQuery('input[name="education"]:checked').val();
     var contacts = phones;
     var id_country = get("country").value;
+    if (id_country.length === 0) {
+        validations.errors.push({msg: "El país de origen es obligatorio", title: "País de origen"});
+    }
     var id_city = get("city").value;
     var id_hq = get("hq").value;
+    if (id_hq.length === 'null') {
+        validations.errors.push({msg: "Debe seleccionar una sede", title: "Sede"});
+    }
     var email = get("email").value;
+    if (email.length === 0) {
+        validations.errors.push({msg: "Por favor proporcione un correo electronico", title: "Correo electrónico"});
+    }
     var id_modality = get("modality").value;
     var id_publicity = get("publicity").value;
     var hosted = jQuery('input[name="hosted"]:checked').val();
@@ -101,34 +120,75 @@ function requestRegistration() {
     var usertype = jQuery("usertype").val();
     var password = jQuery("password").val();
     var url = "/requests/createUser.php";
+    
+    if (!get('rules').checked) {
+        validations.errors.push({msg:"Usted debe leer y aceptar el reglamento para poder asistir al campamento", title:"Reglamento"});
+    }
 
-    console.log("{\nname: " + name + ",\nparent_name: " + parent_name + ",\nmaternal_name:" + maternal_name + ",\nemail: "
-            + email + ",\ngenre: " + genre + ",\neducation: " + scholarity + ",\nid_country: " + id_country +
-            ",\nid_city:" + id_city + ",\nid_hq: " + id_hq + ",\nemail: " + email + ",\nid_modality: " + id_modality +
-            ",\nid_publicity: " + id_publicity + ",\nhosted: " + hosted + ",\nassistance: " + assistance +
-            ",\nprice: " + price + ",\nusername: " + username + ",\nusertype: " + usertype + ",\npassword: " + password + "\n}");
-    jQuery.ajax({
-        type: "POST",
-        url: url,
-        data: {name: name, parent_name: parent_name, maternal_name: maternal_name, genre: genre, born: birthdate,
-            scholarity: scholarity, contacts: contacts, id_country: id_country, id_city: id_city, id_hq: id_hq, email: email,
-            id_modality: id_modality, id_publicity: id_publicity, hosted: hosted, assistance: assistance, price: price,
-            username: username, id_usertype: usertype, password: password}
-    }).success(function(data) {
-        datos = JSON.parse(data);
-        console.dir(data);
-        if (datos.result === "ok") {
-            console.log("The user was saved on the data base");
-            location.href="/users/view.php?user="+datos.id_user;
-//            get("form").reset();
-//            get("alerts").innerHTML = '<div class="alert alert-success" role="alert">El usuario fue creado satisfactoriamente, <br>imprima su comprobante  <a href="/users/view.php?user=' + datos.id_user + '">aquí</a></div>';
-        } else {
-            get("alerts").innerHTML = '<div class="alert alert-danger" role="alert">El usuario no pudo ser creado en la base de datos, verifique su información</div>';
+//    console.log("{\nname: " + name + ",\nparent_name: " + parent_name + ",\nmaternal_name:" + maternal_name + ",\nemail: "
+//            + email + ",\ngenre: " + genre + ",\neducation: " + scholarity + ",\nid_country: " + id_country +
+//            ",\nid_city:" + id_city + ",\nid_hq: " + id_hq + ",\nemail: " + email + ",\nid_modality: " + id_modality +
+//            ",\nid_publicity: " + id_publicity + ",\nhosted: " + hosted + ",\nassistance: " + assistance +
+//            ",\nprice: " + price + ",\nusername: " + username + ",\nusertype: " + usertype + ",\npassword: " + password + "\n}");
+    if (validations.errors === "undefined" || validations.errors.length === 0) {
+        jQuery.ajax({
+            type: "POST",
+            url: url,
+            data: {name: name, parent_name: parent_name, maternal_name: maternal_name, genre: genre, born: birthdate,
+                scholarity: scholarity, contacts: contacts, id_country: id_country, id_city: id_city, id_hq: id_hq, email: email,
+                id_modality: id_modality, id_publicity: id_publicity, hosted: hosted, assistance: assistance, price: price,
+                username: username, id_usertype: usertype, password: password}
+        }).success(function(data) {
+            datos = JSON.parse(data);
+            console.dir(data);
+            if (datos.result === "ok") {
+                console.log("The user was saved on the data base");
+                location.href = "/users/view.php?user=" + datos.id_user;
+            } else {
+                get("alerts").innerHTML = '<div class="alert alert-danger" role="alert">El usuario no pudo ser creado en la base de datos, verifique su información</div>';
+            }
+
+        }).fail(function() {
+            console.log("There was an error while performing this operation");
+        });
+    } else {
+        printErrors(validations.errors);
+    }
+}
+
+function checkRequiredContacts(validations) {
+    var home = get('home_phone').value;
+    var cell = get('cell_phone').value;
+    var errores = [];
+
+    if (home.length === 0 || isNaN(home)) {
+        errores.push({msg: "El contacto de casa no es un número válido", title: "Contacto incorrecto"});
+    } else {
+        if (isUnique(home)) {
+            phones.push({type: "1", value: home});
         }
+    }
 
-    }).fail(function() {
-        console.log("There was an error while performing this operation");
-    });
+    if (cell.length === 0 || isNaN(cell)) {
+        errores.push({msg: "El contacto de celular no es un número válido", title: "Celular incorrecto"});
+    } else {
+        if (isUnique(cell)) {
+            phones.push({type: "2", value: cell});
+        }
+    }
+
+    validations.errors = errores;
+    console.log("Returning: " + validations.errors + "\nFound errors:" + errores);
+    return validations;
+}
+
+function isUnique(number) {
+    for (var phone in phones) {
+        var current = phones[phone];
+        if (current.value === number) {
+            return false;
+        }
+    }
 }
 
 function updateStates() {
@@ -238,6 +298,16 @@ function errorMsg(msg) {
 function infoMsg(msg) {
     var closeable = '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
     get("alerts").innerHTML = '<div class="alert alert-info alert-dismissible" role="alert">' + closeable + msg + '</div>';
+}
+
+function printErrors(errors) {
+    var message = "<ul>";
+    for (var index in errors) {
+        var current = errors[index];
+        message += "<li>" + current.msg + "</li>";
+    }
+    message += "</ul>";
+    errorMsg(message);
 }
 
 function findUser() {
