@@ -108,6 +108,7 @@ if ($id_user !== 0) {
 } else {
     $response['result'] = "fail";
     $response['query'] = $query;
+    $response['error_msg'] = mysqli_error($link);
 }
 
 echo json_encode($response);

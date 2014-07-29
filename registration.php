@@ -303,7 +303,7 @@
                         </table>
 
                         <?php if (isset($_SESSION['user'])) { ?>
-                            <input type="checkbox" onclick="toggleAccountInfo();" > Habilitar usuario de sistema
+                            <input id='register_system_user' type="checkbox" onclick="toggleAccountInfo();" > Habilitar usuario de sistema
 
                             <div id="account_info" style="display: none">
                                 <table>
@@ -356,7 +356,7 @@
 
                     <div id="disclaimers">
                         <span style="text-transform: uppercase">
-                            Por favor leer el <a href="/requests/download.php?filename=REGLAMENTO.docx" target="_blank">reglamento deneral del campamento</a> y marque la siguiente casilla si esta usted de acuerdo
+                            Por favor leer el <a href="http://registro.iyfes.org/downloads/REGLAMENTO.docx" target="_blank">reglamento deneral del campamento</a> y marque la siguiente casilla si esta usted de acuerdo
                         </span>
                         <br>
                         <input id='rules' type="checkbox" required/> He leído el reglamento y estoy de acuerdo
@@ -368,7 +368,7 @@
                 </form>
                 <div id='privacy_police'>
                     <span style="text-transform: uppercase">
-                        Si desea conocer nuestra política de privacidad, por favor haga click <a href="/requests/download.php?filename=PRIVACY.pdf" target="_blank">aquí</a>
+                        Si desea conocer nuestra política de privacidad, por favor haga click <a href="http://registro.iyfes.org/downloads/PRIVACY.pdf" target="_blank">aquí</a>
                     </span>
                 </div>
             </center>

@@ -92,11 +92,17 @@ function requestRegistration() {
     var parent_name = get("parent_name").value;
     var maternal_name = get("maternal_name").value;
     var genre = jQuery('input[name="sex"]:checked').val();
+    if (genre !== 'F' && genre !== 'M') {
+        validations.errors.push({msg: "Por favor seleccione su sexo", title: "Sexualidad"});
+    }
     var birthdate = get("birthdate").value;
     if (birthdate.length === 0) {
         validations.errors.push({msg: "Por favor proporcione su fecha de nacimiento", title: "Fecha de nacimiento"});
     }
     var scholarity = jQuery('input[name="education"]:checked').val();
+    if (scholarity === 'undefined') {
+        validations.errors.push({msg: "No ha seleccionado su nivel escolar", title: "Escolaridad"});
+    }
     var contacts = phones;
     var id_country = get("country").value;
     if (id_country.length === 0) {
@@ -116,13 +122,36 @@ function requestRegistration() {
     var hosted = jQuery('input[name="hosted"]:checked').val();
     var assistance = jQuery('input[name="assistance"]:checked').val();
     var price = get("price").innerHTML;
-    var username = jQuery("#username").val();
-    var usertype = jQuery("usertype").val();
-    var password = jQuery("password").val();
+    var username = "null";
+    var usertype = "null";
+    var password = "null";
+    var password_confirmation = "null";
+
+    if (get('register_system_user') !== null) {
+        if (get('register_system_user') !== 'undefined' && get('register_system_user').checked) {
+            username = jQuery("#username").val();
+            usertype = jQuery("#usertype").val();
+            password = jQuery("#password").val();
+            password_confirmation = jQuery("#password_confirmation").val();
+
+            if (username.length === 0) {
+                validations.errors.push({msg: "Proporcione un nombre de usuario", title: "Nombre de usuario incorrecto"});
+            }
+
+            if (password.length < 6) {
+                validations.errors.push({msg: "Su contraseña es muy corta", title: "Contraseña no valida"});
+            }
+
+            if (password !== password_confirmation) {
+                validations.errors.push({msg: "La contraseña y la confirmación no coinciden", title: "Contraseña no concuerda"});
+            }
+        }
+    }
+
     var url = "/requests/createUser.php";
-    
+
     if (!get('rules').checked) {
-        validations.errors.push({msg:"Usted debe leer y aceptar el reglamento para poder asistir al campamento", title:"Reglamento"});
+        validations.errors.push({msg: "Usted debe leer y aceptar el reglamento para poder asistir al campamento", title: "Reglamento"});
     }
 
 //    console.log("{\nname: " + name + ",\nparent_name: " + parent_name + ",\nmaternal_name:" + maternal_name + ",\nemail: "
@@ -139,17 +168,16 @@ function requestRegistration() {
                 id_modality: id_modality, id_publicity: id_publicity, hosted: hosted, assistance: assistance, price: price,
                 username: username, id_usertype: usertype, password: password}
         }).success(function(data) {
-            datos = JSON.parse(data);
-            console.dir(data);
+            var datos = JSON.parse(data);
             if (datos.result === "ok") {
                 console.log("The user was saved on the data base");
                 location.href = "/users/view.php?user=" + datos.id_user;
             } else {
-                get("alerts").innerHTML = '<div class="alert alert-danger" role="alert">El usuario no pudo ser creado en la base de datos, verifique su información</div>';
+                get("alerts").innerHTML = '<div class="alert alert-danger" role="alert">El usuario no pudo ser creado en la base de datos, verifique su información. <br><strong>Hint:</strong> ' + datos.error_msg + '</div>';
             }
-
         }).fail(function() {
             console.log("There was an error while performing this operation");
+            errorMsg("No se pudo establecer contacto para su request, intente más tarde, si el problema persiste comuniquese con un administrador del sistema");
         });
     } else {
         printErrors(validations.errors);
