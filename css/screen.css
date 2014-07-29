@@ -49,3 +49,7 @@ table.style, table.style tbody td, table.style tbody tr{
     border: 1px solid black;
     
 }
+
+select option{
+    text-transform: capitalize;
+}

@@ -194,7 +194,7 @@ function recalcPrice() {
 function requestLogin() {
     var username = get("username").value;
     var password = get("password").value;
-    var url = "requests/createSession.php";
+    var url = "/requests/createSession.php";
 
     console.log("requesting login for user " + username + " and btw the url is " + url);
 
@@ -212,13 +212,13 @@ function requestLogin() {
 }
 
 function logout() {
-    var url = "requests/destroySession.php";
+    var url = "/requests/destroySession.php";
     jQuery.ajax({
         type: "POST",
         url: url
     }).success(function(data) {
         if (data === "ok") {
-            window.location.href = "/iyf/login.php";
+            window.location.href = "/login.php";
         }
     });
 }
@@ -242,7 +242,7 @@ function infoMsg(msg) {
 
 function findUser() {
     var id_user = jQuery("#user_id").val();
-    var url = "/iyf/requests/getUser.php";
+    var url = "/requests/getUser.php";
     jQuery.ajax({
         type: "GET",
         url: url,
@@ -274,7 +274,7 @@ function findUser() {
 
             jQuery.ajax({
                 type: "GET",
-                url: "/iyf/requests/getPayments.php",
+                url: "/requests/getPayments.php",
                 data: {id_user: jsondata.id_user}
             }).success(function(data) {
                 //console.dir(data);
@@ -316,7 +316,7 @@ function makePayment(options) {
     } else {
         jQuery.ajax({
             type: "POST",
-            url: "/iyf/requests/createPayment.php",
+            url: "/requests/createPayment.php",
             data: {payer: registered_to,
                 amount: payment,
                 payment_type: payment_method,
@@ -341,7 +341,7 @@ function makePayment(options) {
 function changeAssistance(id_user) {
     jQuery.ajax({
         type: "POST",
-        url: "/iyf/requests/toggleAssistance.php",
+        url: "/requests/toggleAssistance.php",
         data: {id_user: id_user}
     }).success(function(data) {
         if (data === "ok") {

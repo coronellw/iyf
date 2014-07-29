@@ -9,7 +9,7 @@
                 <span class="icon-bar"></span>
             </button>
             <h1 class="header-logo" id="logo">
-                <a class="navbar-brand" href="/iyf/index.php">
+                <a class="navbar-brand" href="/index.php">
                     <img src="/img/logo1.png" />
                 </a>
             </h1>            
