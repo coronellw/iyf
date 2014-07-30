@@ -40,6 +40,10 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="#">Perfil</a></li>
                             <li><a href="#">Otros</a></li>
+                            <?php if (isset($_SESSION['user']) && $_SESSION['user']['id_usertype'] < 2) { ?>
+                                <li class="divider"></li>
+                                <li><a href="/sysparam/index.php">Configuración</a></li>
+                            <?php } ?>
                             <li class="divider"></li>
                             <li><a href="/login.php" onclick="logout();">Salir</a></li>
                         </ul>

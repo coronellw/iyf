@@ -45,7 +45,7 @@ table tbody td{
 }
 
 
-table.style, table.style tbody td, table.style tbody tr{
+table.style, table.style tbody td, table.style tbody tr, table.style thead tr, table.style thead tr th{
     border: 1px solid black;
     
 }

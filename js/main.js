@@ -122,10 +122,10 @@ function requestRegistration() {
     var hosted = jQuery('input[name="hosted"]:checked').val();
     var assistance = jQuery('input[name="assistance"]:checked').val();
     var price = get("price").innerHTML;
-    var username = "null";
-    var usertype = "null";
-    var password = "null";
-    var password_confirmation = "null";
+    var username;
+    var usertype;
+    var password;
+    var password_confirmation;
 
     if (get('register_system_user') !== null) {
         if (get('register_system_user') !== 'undefined' && get('register_system_user').checked) {
@@ -347,20 +347,21 @@ function findUser() {
         data: {id_user: id_user, format: "json"}
     }).success(function(data) {
         if (data !== "fail") {
-            var jsondata = JSON.parse(data);
-            get("names").innerHTML = jsondata.names;
-            get("parent").innerHTML = jsondata.parent_names;
-            get("maternal").innerHTML = jsondata.maternal_name;
-            get("country").innerHTML = jsondata.country_name;
-            get("pays").innerHTML = jsondata.pays;
-            get("paid").innerHTML = jsondata.paid;
-            get("pending").innerHTML = jsondata.pending;
-            get("register_payment").href = "create.php?user=" + jsondata.id_user;
+            var jsonData = JSON.parse(data);
+            getGroups(jsonData.id_user);
+            get("names").innerHTML = jsonData.names;
+            get("parent").innerHTML = jsonData.parent_names;
+            get("maternal").innerHTML = jsonData.maternal_name;
+            get("country").innerHTML = jsonData.country_name;
+            get("pays").innerHTML = jsonData.pays;
+            get("paid").innerHTML = jsonData.paid;
+            get("pending").innerHTML = jsonData.pending;
+            get("register_payment").href = "create.php?user=" + jsonData.id_user;
             jQuery("#assistance").click(function() {
-                changeAssistance(jsondata.id_user);
+                changeAssistance(jsonData.id_user);
             });
 
-            if (jsondata.assistance === '1') {
+            if (jsonData.assistance === '1') {
                 jQuery("#assistance").html("REVOCAR ASISTENCIA");
                 get("can_assist").innerHTML = "Si";
                 get("register_payment").style.display = "none";
@@ -373,7 +374,7 @@ function findUser() {
             jQuery.ajax({
                 type: "GET",
                 url: "/requests/getPayments.php",
-                data: {id_user: jsondata.id_user}
+                data: {id_user: jsonData.id_user}
             }).success(function(data) {
                 //console.dir(data);
                 get("payments").innerHTML = data;
@@ -396,6 +397,21 @@ function findUser() {
                 jQuery(".close").click();
             }, 2500);
         }
+    });
+}
+
+function getGroups(id_user){
+    jQuery.ajax({
+        type: "GET",
+        url: "/requests/getGroupsForUser.php",
+        data: {user: id_user}
+    }).success(function(data){
+        var jsonData = JSON.parse(data);
+        if (jsonData.result === "ok") {
+            console.dir(jsonData.groups);
+        }
+    }).fail(function(){
+        console.log("Unable to complete this request");
     });
 }
 
