@@ -92,6 +92,7 @@
                             <a id='assistance' class="btn btn-primary btn-sm">ASISTENCIA</a>
                         <?php } ?>
                         <a id="change_group" href="#" class="btn btn-primary btn-sm">CAMBIAR GRUPO</a>
+                        <a id="print_barcode" href="#" class="btn btn-primary btn-sm">IMPRIMIR CODIGO</a>
                     </div>
                     <br>
                     <br>

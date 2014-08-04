@@ -357,6 +357,7 @@ function findUser() {
             get("paid").innerHTML = jsonData.paid;
             get("pending").innerHTML = jsonData.pending;
             get("register_payment").href = "create.php?user=" + jsonData.id_user;
+            get("print_barcode").href = "/users/view.php?user=" + jsonData.id_user;
             jQuery("#assistance").click(function() {
                 changeAssistance(jsonData.id_user);
             });
@@ -392,6 +393,7 @@ function findUser() {
             get("can_assist").innerHTML = "";
             get("payments").innerHTML = "";
             get("register_payment").href = "#";
+            get("print_barcode").href="#";
 
             timeout = setTimeout(function() {
                 jQuery(".close").click();
