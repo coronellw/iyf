@@ -34,7 +34,7 @@ if (mysqli_num_rows($result_user)) {
             $response["result"] = "ok";
             // SI EL USUARIO REALIZO COMPLETA SUS PAGOS SE LE APROBARÁ ASISTENCIA
             $assistance_query = "SELECT 
-                                    u.pays - SUM(amount) INTO pending
+                                    u.pays - SUM(amount) as pending
                                 FROM
                                     users u, payments p, payment_user pu, payment_type pt
                                 WHERE
@@ -47,7 +47,7 @@ if (mysqli_num_rows($result_user)) {
                 $assistance = mysqli_fetch_array($result_assistance);
                 if ($assistance['pending'] <= 0) {
                     $update_query = "UPDATE users SET assistance = '1' WHERE id_user = $id_user_paying;";
-                    $update_result = $link->query($query);
+                    $update_result = $link->query($update_query);
                     if ($update_result) {
                         $response["info_msg"] = "La asistencia ha sido aprobada";
                     } else {

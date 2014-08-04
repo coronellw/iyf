@@ -57,3 +57,23 @@ select option{
 .tiny {
     font-size: 9px;
 }
+
+table.custom_table tbody tr:hover{
+    background: none;
+}
+
+thead tr th {
+    background-color: #428BCA;
+    color: #efe;
+    text-align: center;
+}
+
+table.custom_table {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+table.custom_table td, table.custom_table th {
+    border: 1px solid;
+    border-color: transparent;
+    padding: 3px 10px;
+}

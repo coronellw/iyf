@@ -348,7 +348,7 @@ function findUser() {
     }).success(function(data) {
         if (data !== "fail") {
             var jsonData = JSON.parse(data);
-            getGroups(jsonData.id_user);
+//            getGroups(jsonData.id_user);
             get("names").innerHTML = jsonData.names;
             get("parent").innerHTML = jsonData.parent_names;
             get("maternal").innerHTML = jsonData.maternal_name;
@@ -441,8 +441,9 @@ function makePayment(options) {
             var jsonData = JSON.parse(data);
             if (jsonData.result === "ok") {
                 location.reload();
-                if (typeof jsonData!=="undefined") {
+                if (typeof jsonData.info_msg!=="undefined") {
                     infoMsg(jsonData.info_msg);
+                    console.dir(jsonData);
                 }
                 console.log("Transaction complete");
             }else{
@@ -458,8 +459,7 @@ function makePayment(options) {
             "\nCantidad : " + payment +
             "\nMetodo : " + payment_method +
             "\nA pagar : " + total_payment +
-            "\nPendiente : " + options.pending +
-            "\nDiferencia : " + dif
+            "\nPendiente : " + options.pending
             );
 }
 
@@ -475,6 +475,7 @@ function changeAssistance(id_user) {
             jQuery("#can_assist").html(assistance);
             var assistance = assistance === "Si" ? "REVOCAR ASISTENCIA" : "APROBAR ASISTENCIA";
             jQuery("#assistance").html(assistance);
+            jQuery("#register_payment").toggle();
         }
     });
 }
