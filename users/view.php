@@ -27,7 +27,7 @@
                         <tbody>
                             <tr>
                                 <td colspan="4" style="text-align: center; font-size: 1.8em; font-weight: bold;">
-                                    Informarción de asistencia
+                                    Información de asistencia
                                 </td>
                             </tr>
                             <tr>
@@ -69,7 +69,7 @@
                         <tbody>
                             <tr>
                                 <td colspan="4" style="text-align: center; font-size: 1.8em; font-weight: bold;">
-                                    Informarción del asistente
+                                    Información del asistente
                                 </td>
                             </tr>
                             <tr>

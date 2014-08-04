@@ -3,7 +3,7 @@
     <head>
         <title>IYF - Nuevo pago</title>
         <?php include '../template/_head.php' ?>
-        <script src="/iyf/js/jquery.maskedinput.js" type="text/javascript"></script>
+        <script src="/js/jquery.maskedinput.js" type="text/javascript"></script>
         <script>
             jQuery(function() {
                 jQuery('#amount').mask('9?999', {placeholder: " "});

@@ -393,7 +393,7 @@ function findUser() {
             get("can_assist").innerHTML = "";
             get("payments").innerHTML = "";
             get("register_payment").href = "#";
-            get("print_barcode").href="#";
+            get("print_barcode").href = "#";
 
             timeout = setTimeout(function() {
                 jQuery(".close").click();
@@ -402,17 +402,17 @@ function findUser() {
     });
 }
 
-function getGroups(id_user){
+function getGroups(id_user) {
     jQuery.ajax({
         type: "GET",
         url: "/requests/getGroupsForUser.php",
         data: {user: id_user}
-    }).success(function(data){
+    }).success(function(data) {
         var jsonData = JSON.parse(data);
         if (jsonData.result === "ok") {
             console.dir(jsonData.groups);
         }
-    }).fail(function(){
+    }).fail(function() {
         console.log("Unable to complete this request");
     });
 }
@@ -437,9 +437,18 @@ function makePayment(options) {
                 amount: payment,
                 payment_type: payment_method,
                 registerer: registered_by}
-        }).success(function() {
-            location.reload();
-            console.log("Transaction complete");
+        }).success(function(data) {
+            var jsonData = JSON.parse(data);
+            if (jsonData.result === "ok") {
+                location.reload();
+                if (typeof jsonData!=="undefined") {
+                    infoMsg(jsonData.info_msg);
+                }
+                console.log("Transaction complete");
+            }else{
+                errorMsg(jsonData.error_msg);
+            }
+
         });
     }
 
