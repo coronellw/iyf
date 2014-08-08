@@ -15,3 +15,11 @@ function createMsg($msg, $type, $title){
        "title"=>$title
    );
 }
+
+function parseIntOrNull($num){
+  if (is_numeric($num)) {
+    return $num;
+  } else {
+    return null;
+  }
+}

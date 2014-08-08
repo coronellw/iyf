@@ -441,12 +441,12 @@ function makePayment(options) {
             var jsonData = JSON.parse(data);
             if (jsonData.result === "ok") {
                 location.reload();
-                if (typeof jsonData.info_msg!=="undefined") {
+                if (typeof jsonData.info_msg !== "undefined") {
                     infoMsg(jsonData.info_msg);
                     console.dir(jsonData);
                 }
                 console.log("Transaction complete");
-            }else{
+            } else {
                 errorMsg(jsonData.error_msg);
             }
 
@@ -478,4 +478,52 @@ function changeAssistance(id_user) {
             jQuery("#register_payment").toggle();
         }
     });
+}
+
+function sendUserEditRequest(id_user, id_country) {
+    var user = {};
+    var errors = [];
+    user.id_user = id_user;
+    user.names = get('nombre').value;
+    if (user.names.length === 0) {
+        errors.push({msg: "El nombre es obligatorio", title: "Sin nombre"});
+    }
+    user.birthdate = get('birthdate').value;
+    console.log("Bdate is " + user.birthdate);
+    if (user.birthdate.length === 0) {
+        errors.push({msg: "Por favor proporcione su fecha de nacimiento", title: "Fecha de nacimiento"});
+    }
+    user.parent_names = get('apellido1').value;
+    user.maternal_name = get('apellido2').value;
+    user.modality = get("modality").value;
+    user.scholarity = jQuery('input[name="education"]:checked').val();
+
+    if (user.scholarity === 'undefined') {
+        errors.push({msg: "No ha seleccionado su nivel escolar", title: "Escolaridad"});
+    }
+    user.id_headquarters = get('hq').value;
+    if (user.id_headquarters.length === 'null') {
+        errors.push({msg: "Debe seleccionar una sede", title: "Sede"});
+    }
+    user.hosted = jQuery('input[name="hosted"]:checked').val();
+    
+    user.country = id_country;
+
+    if (errors.length === 0) {
+        jQuery.ajax({
+            type: "POST",
+            url: "/requests/updateUser.php",
+            data: {user: user}
+        }).success(function(data) {
+            var jsonData = JSON.parse(data);
+            if (jsonData.result === 'ok') {
+                window.location.href = "/users/view.php?user=" + jsonData.id_user;
+                successMsg("El usuario se actualizo correctamente");
+            } else {
+                errorMsg("No se pudo actualizar el usuario.\nHINT: " + jsonData.error_msg);
+            }
+        });
+    } else {
+        printErrors(errors);
+    }
 }

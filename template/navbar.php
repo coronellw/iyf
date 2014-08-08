@@ -26,7 +26,8 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="#">Asistentes</a></li>
                             <li><a href="#">Staff</a></li>
-                            <li><a href="#">Maestros</a></li>
+                            <li><a href="/consultas/maestros.php">Maestros</a></li>
+                            <li><a href="/consultas/general.php">General</a></li>
                             <li><a href="/consultas/payment.php">Pagos</a></li>
                             <li class="divider"></li>
                             <li><a href="#">Estad&iacute;sticas</a></li>

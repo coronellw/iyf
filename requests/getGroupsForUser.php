@@ -18,15 +18,15 @@ if (mysqli_num_rows($result_user) > 0) {
     $user = mysqli_fetch_array($result_user);
     $response['user'] = $user;
 
-    $query_groups = "SELECT * FROM groups;" or die("Error " . mysqli_error($link));
+    $query_groups = "SELECT * FROM group_types;" or die("Error " . mysqli_error($link));
     $result_groups = $link->query($query_groups);
     if (mysqli_num_rows($result_groups) > 0) {
         while ($group = mysqli_fetch_array($result_groups)) {
             $query_criterias = "SELECT c.* "
                     . "FROM "
-                    . "groups g, group_criteria gc, criterias c "
+                    . "group_types gt, group_type_criteria gtc, criterias c "
                     . "WHERE "
-                    . "g.id_group = gc.id_group AND c.id_criteria = gc.id_criteria AND g.id_group = " . $group['id_group'] . ";"
+                    . "gt.id_group_type = gtc.id_group_type AND c.id_criteria = gtc.id_criteria AND g.id_group_type = " . $group['id_group_type'] . ";"
                     or die("Error " . mysqli_error($link));
             $result_criteria = $link->query($query_criterias);
             if (mysqli_num_rows($result_criteria) > 0) {
@@ -43,7 +43,7 @@ if (mysqli_num_rows($result_user) > 0) {
                 }
             } else {
                 $response['result'] = 'warning';
-                $response['error_msg'] = 'No criterias were found for groups ' . $group['id_group'];
+                $response['error_msg'] = 'No criterias were found for groups ' . $group['id_group_type'];
             }
         }
         if (!isset($response['result'])) {
