@@ -12,7 +12,7 @@
                 if (isset($_SESSION['user'])) {
                     include '../db_info.php';
                     $query = "SELECT
-                                    u.id_user, u.names as nombre, u.parent_names as apellido_1, u.maternal_name as apellido_2, g.name as grupo
+                                    u.id_user, u.names as nombre, u.parent_names as apellido_1, u.maternal_name as apellido_2, g.name as grupo, u.checked
                                 FROM 
                                     users u LEFT OUTER JOIN groups g ON u.id_user = g.group_master 
                                 WHERE
@@ -31,6 +31,7 @@
                                     <th>Código</th>
                                     <th>Nombre completo</th>
                                     <th>Grupo</th>
+                                    <th>Asistencia</th>
                                 </tr>
                             </thead>
                             <tbdoy>
@@ -46,7 +47,15 @@
                                             } else {
                                                 echo "Sin asignar";
                                             }
-                                            ?></td>
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <?php if ($detail['checked']==='1') {
+                                                echo "Si";
+                                            } else {
+                                                echo "No";
+                                            } ?>
+                                        </td>
                                     </tr>
                                 <?php } ?>
                             </tbdoy>

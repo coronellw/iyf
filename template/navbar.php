@@ -20,12 +20,19 @@
             <ul class="nav navbar-nav navbar-right">
                 <?php if (isset($_SESSION['user'])) { ?>
                     <li><a href="/registration.php">Registro</a></li>
-                    <li><a href="/payments/">Pagos</a></li>
+                    
+                    <li class="dropdown">
+                        <a href="/#" class="dropdown-toggle" data-toggle="dropdown">Registrar <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Asistencia de Maestro</a></li>
+                            <li><a href="#">Asistencia de estudiante</a></li>
+                            <li><a href="/payments/">Pagos</a></li>
+                        </ul>
+                    </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Consultas <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Asistentes</a></li>
-                            <li><a href="#">Staff</a></li>
+                            <li><a href="/groups">Grupos</a></li>
                             <li><a href="/consultas/maestros.php">Maestros</a></li>
                             <li><a href="/consultas/general.php">General</a></li>
                             <li><a href="/consultas/payment.php">Pagos</a></li>

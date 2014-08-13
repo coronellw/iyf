@@ -15,7 +15,7 @@
                                     u.id_user, u.names as 'nombre', u.parent_names as 'apellido_1', u.maternal_name as 'apellido_2', 
                                     u.email as 'correo', h.name as 'sede', c.name as 'ciudad',c.district as 'estado', 
                                     sum(p.amount) as 'total_pagado', u.pays as 'a_pagar',pt.name as 'metodo', u.assistance as 'asistencia',
-                                    (YEAR(CURDATE())-YEAR(born))- (RIGHT(CURDATE(),5)<RIGHT(born,5)) as edad, m.name as modalidad,
+                                    (YEAR(CURDATE())-YEAR(born))-(RIGHT(CURDATE(),5)<RIGHT(born,5)) as edad, m.name as modalidad,
                                     s.name as escolaridad, g.name as grupo, g.group_master as maestro
                             FROM 
                                     users u 
@@ -23,10 +23,10 @@
                                     LEFT OUTER JOIN payments p ON pu.id_payment = p.id_payment
                                     LEFT OUTER JOIN payment_type pt ON  p.id_payment_type = pt.id_payment_type
                                     LEFT OUTER JOIN scolarships s ON u.scolarship = s.id_scolarship
-                                    LEFT OUTER JOIN groups g ON u.id_group = g.id_group,
-                                    headquarters h, cities c, modalities m
+                                    LEFT OUTER JOIN groups g ON u.id_group = g.id_group
+                                    LEFT OUTER JOIN cities c ON u.id_city = c.id_city,
+                                    headquarters h, modalities m
                             WHERE
-                                    u.id_city = c.id_city AND
                                     u.id_headquarters = h.id_headquarter AND
                                     u.id_modality = m.id_modality
                             GROUP BY u.id_user;" or die("Error " . mysqli_error($link));
@@ -63,8 +63,12 @@
                                         <td>
                                             <?php echo $detail['id_user'] ?>
                                         </td>
-                                        <td><?php echo $detail['nombre'] . " " . $detail['apellido_1'] . " " . $detail['apellido_2'] ?></td>
-                                        <td><?php echo $detail['correo'] ?></td>
+                                        <td>
+                                            <span class="text-capitalize">
+                                                <?php echo $detail['nombre'] . " " . $detail['apellido_1'] . " " . $detail['apellido_2'] ?>
+                                            </span>
+                                        </td>
+                                        <td class="text-lowercase"><?php echo $detail['correo'] ?></td>
                                         <td><?php echo $detail['sede'] ?></td>
                                         <td><?php echo $detail['ciudad'] ?></td>
                                         <td><?php echo $detail['estado'] ?></td>
@@ -97,7 +101,7 @@
                                         <td><?php echo $detail['modalidad'] ?></td>
                                         <td><?php echo $detail['escolaridad'] ?></td>
                                         <td><?php echo $detail['grupo'] ?></td>
-                                        <td><?php
+                                        <td class="text-capitalize"><?php
                                             if (isset($detail['maestro'])) {
                                                 echo $detail['maestro'];
                                             } else {

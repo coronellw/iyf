@@ -50,8 +50,8 @@
                                         <td>
                                             <?php echo $detail['id_user'] ?>
                                         </td>
-                                        <td><?php echo $detail['nombre'] . " " . $detail['apellido_1'] . " " . $detail['apellido_2'] ?></td>
-                                        <td><?php echo $detail['correo'] ?></td>
+                                        <td class="text-capitalize"><?php echo $detail['nombre'] . " " . $detail['apellido_1'] . " " . $detail['apellido_2'] ?></td>
+                                        <td class="text-lowercase"><?php echo $detail['correo'] ?></td>
                                         <td><?php echo $detail['sede'] ?></td>
                                         <td><?php echo $detail['ciudad'] ?></td>
                                         <td><?php echo $detail['estado'] ?></td>
