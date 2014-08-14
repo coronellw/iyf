@@ -16,11 +16,11 @@
                         users u 
                         LEFT OUTER JOIN payment_user pu ON pu.id_user = u.id_user 
                         LEFT OUTER JOIN payments p ON pu.id_payment = p.id_payment
-                        LEFT OUTER JOIN payment_type pt ON  p.id_payment_type = pt.id_payment_type,
-                        headquarters h, cities c
+                        LEFT OUTER JOIN payment_type pt ON  p.id_payment_type = pt.id_payment_type
+                        LEFT OUTER JOIN cities c ON  u.id_city = c.id_city,
+                        headquarters h
                     WHERE
-                            u.id_city = c.id_city AND
-                            u.id_headquarters = h.id_headquarter 
+                        u.id_headquarters = h.id_headquarter 
                     GROUP BY u.id_user;" or die("Error " . mysqli_error($link));
 
                     $result = $link->query($query);

@@ -24,8 +24,8 @@
                     <li class="dropdown">
                         <a href="/#" class="dropdown-toggle" data-toggle="dropdown">Registrar <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Asistencia de Maestro</a></li>
-                            <li><a href="#">Asistencia de estudiante</a></li>
+                            <li><a href="/assistance/maestros.php">Asistencia de Maestro</a></li>
+                            <li><a href="/assistance/estudiantes.php">Asistencia de estudiante</a></li>
                             <li><a href="/payments/">Pagos</a></li>
                         </ul>
                     </li>

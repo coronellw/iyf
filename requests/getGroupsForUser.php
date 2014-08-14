@@ -10,11 +10,31 @@ $commited_conditions = array();
 
 $id_user = filter_input(INPUT_GET, "user");
 
+
+function updateUser($id_user, $id_group){
+    $response = array();
+    $qu_user = "UPDATE users SET id_group = " . $id_group . ", checked = 1 WHERE id_user = " . $id_user or die("Error ".mysqli_error($link));
+    $ru_user = $link->query($qu_user);
+    if ($ru_user) {
+        $response['result'] = "ok";
+        $response['info_msg'] = "The user was correctly assigned in an existing group";
+        $response['group']=array();
+        $response['group']['id_group'] = $group['id_group'];
+        $response['group']['professor'] = $group['profesor'];
+        $response['group']['name'] = $group['name'];
+    } else {
+        $response['result'] = "fail";
+        $response['query'] = $qu_user;
+        $response["error_msg"] = mysqli_error($link);
+    }
+    return $response;
+}
+
 function assignGroup($id_user, $id_group_type){
     global $link;
     $response = array();
     # ESTE QUERY RETORNA LOS CURSOS QUE ESTEN POR DEBAJO DEL LIMITE DE ASISTENTES REGISTRADOS
-    $q_group = "SELECT g.*, count(*) as inscritos, u.names, u.parent_names FROM groups g LEFT OUTER JOIN users u ON g.id_group = u.id_group WHERE g.id_group_type = $id_group_type GROUP BY g.id_group HAVING count(*) < (SELECT sp.value FROM sysparams sp where sp.key = 'tam_grupo') ORDER BY inscritos ASC LIMIT 1;";
+    $q_group = "SELECT g.*, count(*) as inscritos, CONCAT(u.names, ' ', u.parent_names, ' ', u.maternal_name) as profesor FROM groups g LEFT OUTER JOIN users u ON g.id_group = u.id_group WHERE g.id_group_type = $id_group_type GROUP BY g.id_group HAVING count(*) < (SELECT sp.value FROM sysparams sp where sp.key = 'tam_grupo') ORDER BY inscritos ASC LIMIT 1;";
     
     $r_group = $link->query($q_group);
     $num = mysqli_num_rows($r_group);
@@ -22,12 +42,8 @@ function assignGroup($id_user, $id_group_type){
     if ($r_group && $num > 0) {
         $group = mysqli_fetch_assoc($r_group);
         # associate user with this group since it still has available space
-        $qu_user = "UPDATE users SET id_group = " . $group['id_group'] . ", checked = 1 WHERE id_user = " . $id_user or die("Error ".mysqli_error($link));
-        $ru_user = $link->query($qu_user);
-        if ($ru_user) {
-            $response['result'] = "ok";
-            $response['note'] = "The user was correctly assigned in an existing group";
-        }
+        $response = updateUser($id_user, $group['id_group']);
+        # return $response;
     } else {
         # request a master with no group in order to create a new group, if no master available, then increase the tam_grupo sysparams by 1, and relaunch the assignGroup routine again
         # BUSCAR MAESTROS QUE NO TENGAN GRUPOS ASIGNADO
@@ -39,32 +55,37 @@ function assignGroup($id_user, $id_group_type){
             
             $master = mysqli_fetch_assoc($r_amasters);
             $id_master = $master['id_user'];
-            $q_number = "SELECT (count(*)+1) as 'number' FROM groups WHERE id_group_type = $id_group_type";
+            $q_number = "SELECT (count(*)+1) as 'number', name FROM groups WHERE id_group_type = $id_group_type";
             $r_number = $link->query($q_number);
-            if ($r_number) {
-                $number = mysqli_fetch_assoc($r_number);
-                $counted = $number['number']."-";
-            }else{
-                $counted="1-";
-            }
-            $qc_group = "INSERT INTO groups(`name`,`group_master`,`id_group_type`) VALUES (CONCAT($counted,(select name from group_types where id_group_type = $id_group_type)), $id_master, $id_group_type)";
+            # THIS SEGMENT PREFIXES THE NUMBER OF THE GROUP
+                if ($r_number) {
+                    $number = mysqli_fetch_assoc($r_number);
+                    $counted = $number['number']."-";
+                }else{
+                    $counted="1-";
+                }
+            $q_group_name = "select name from group_types where id_group_type = $id_group_type";
+            $r_group_name = $link->query($q_group_name);
+            # THIS SEGMENT SUFIXES THE GROUP NAME
+                if ($r_group_name) {
+                    $grupo = mysqli_fetch_assoc($r_group_name);
+                    $group_name = $grupo['name'];
+                } else {
+                    $group_name = 'error';
+                }
+
+            $qc_group = "INSERT INTO groups(`name`,`group_master`,`id_group_type`) VALUES (CONCAT($counted,$group_name), $id_master, $id_group_type)";
             $rc_group = $link->query($qc_group);
             if ($rc_group) {
                 # SI EL GRUPO SE CREA CORRECTAMENTE, SE AGREGA EL USUARIO CON EL GRUPO Y ACABA EL PROCESO
                 $new_id_group = mysqli_insert_id($link);
-                $qu_user = "UPDATE users SET id_group = " . $new_id_group . ", checked = 1 WHERE id_user = " . $id_user or die("Error ".mysqli_error($link));
-                $ru_user = $link->query($qu_user);
-                if ($ru_user) {
-                    $response['result'] = "ok";
-                    $response['note'] = "The user was correctly assigned in an existing group";
-                    return $response;
-                }
+                $response = updateUser($id_user, $new_id_group);
             }else{
                 $response['result'] = "fail";
                 $response['query'] = $qc_group;
                 $response['error_msg'] = "Imposible crear nuevo grupo" . mysqli_error($link);
-                return $response;
             }
+            return $response;
         } else {
             # NO HAY MAESTROS DISPONIBLES O EL QUERY NO SE EJECUTO CORRECTAMENTE, SE PROCEDE A VERIFICAR SI HAY MAESTROS EN EL SISTEMA
             # query para verificar si hay maestros
@@ -86,10 +107,10 @@ function assignGroup($id_user, $id_group_type){
                         $response['result'] = "fail";
                         $response['query'] = $q_increase_tam;
                         $response['error_msg'] = "Imposible incrementar tam_grupo" . mysqli_error($link);
-                        return $response;
                     }
                 }
             }
+            return $response;
         }
     }
 }

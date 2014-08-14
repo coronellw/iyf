@@ -402,6 +402,84 @@ function findUser() {
     });
 }
 
+function findUserRequest(options) {
+    var id_user = jQuery("#user_id").val();
+    var url = "/requests/getCustomUser.php";
+    var respuesta = {};
+
+    return jQuery.ajax({
+        type: "GET",
+        url: url,
+        data: {id_user: id_user, format: "json", modalities: options.modalities}
+    });
+}
+
+function getMaestro(options) {
+    findUserRequest(options).success(function(data) {
+        var jsonData = JSON.parse(data);
+        
+        if (jsonData.result==="ok") {
+            console.log("ok");
+            if (typeof jsonData.user !== 'undefined') {
+                if (jsonData.user.checked === '0') {
+                    get("id").innerHTML = jsonData.user.id_user;
+                    get("nombres").innerHTML = jsonData.user.names;
+                    get("apellidos").innerHTML = jsonData.user.parent_names + " " + jsonData.user.maternal_name;
+                    get("sede").innerHTML = jsonData.user.sede;
+                    get("mail").innerHTML = jsonData.user.email;
+                    jQuery("#btnCnf").click(function(){ confirmarAsistenciaMaestro(jsonData.user.id_user); }); 
+                    jQuery("#maestroModal").modal();    
+                } else{
+                    var sex = jsonData.user.genre === 'M'?'o':'a';
+                    warningMsg(jsonData.user.names +" "+jsonData.user.parent_names+" "+jsonData.user.maternal_name +" ya ha sido confirmad"+sex+" como maestr"+sex);
+                }
+            } else{
+                errorMsg("No se encontro un maestro con esa información");
+            };
+        } else {
+            console.log("not ok");
+            errorMsg("unable to complete query");
+        }
+    });
+    
+}
+
+function getEstudiante(options){
+    findUserRequest(options).success(function(data){
+        var jsonData = JSON.parse(data);
+        if (jsonData.result==="ok") {
+            if (typeof jsonData.user !== 'undefined') {
+                get("id").innerHTML = jsonData.user.id_user;
+                get("nombres").innerHTML = jsonData.user.names;
+                get("apellidos").innerHTML = jsonData.user.parent_names + " " + jsonData.user.maternal_name;
+                get("sede").innerHTML = jsonData.user.sede;
+                get("mail").innerHTML = jsonData.user.email;
+                jQuery("#btnCnf").toggle(false);
+                jQuery("#btnCnf").click(function(){});
+
+                if (jsonData.user.checked === '0') {
+                    jQuery("#btnCnf").click(function(){ confirmarAsistenciaEstudiante(jsonData.user.id_user); }); 
+                    jQuery("#btnCnf").toggle(true);
+                } else{
+                    var sex = jsonData.user.genre === 'M'?'o':'a';
+                    warningMsg(jsonData.user.names +" "+jsonData.user.parent_names+" "+jsonData.user.maternal_name +" ya ha sido confirmad"+sex+" como estudiante");
+                    setGroupInfo(jsonData.user.id_user);
+                    jQuery("#estudianteModal").modal();
+                }
+            } else{
+                warningMsg("No se encontro un estudiante con esa información");
+            };
+        } else{
+            console.log("not ok");
+            errorMsg("unable to complete query");
+        };
+    });
+}
+
+function setGroupInfo(id_user){
+
+}
+
 function getGroups(id_user) {
     jQuery.ajax({
         type: "GET",
@@ -526,4 +604,41 @@ function sendUserEditRequest(id_user, id_country) {
     } else {
         printErrors(errors);
     }
+}
+
+function toggleChecked(id_user){
+    return jQuery.ajax({
+        type: "POST",
+        url: "/requests/toggleChecked.php",
+        data: {id_user: id_user}
+    });
+}
+
+function confirmarAsistenciaMaestro(id_user){
+    asignarGrupo(id_user).success(function(data){
+        jsonData = JSON.parse(data);
+        if (jsonData.result === "ok") {
+            successMsg("El esutidante ha sido confirmado");
+            jQuery("#estudianteModal").modal();
+        } else{
+            errorMsg("Al parecer hubo un error al confirmar al estudiante, contacte al supervisor y/o administrador del sistema. HINT: "+ jsonData.error_msg+". "+jsonData.info_msg)
+        };
+        jQuery("#maestroModal").modal('toggle');
+    });
+}
+
+function asignarGrupo(id_user){
+    return jQuery.ajax({
+        type: "GET",
+        url: "/requests/getGroupsForUser.php",
+        data: {user: id_user}
+    });
+}
+
+function getGrupo(id_user){
+    return jQuery.ajax({
+        type: "GET",
+        url: "/requests/getGroupInfo.php",
+        data: {user: id_user}
+    });
 }

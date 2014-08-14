@@ -20,7 +20,7 @@ $query = "SELECT "
 $users = $link->query($query);
 $count = mysqli_num_rows($users);
 if ($count > 0) {
-    $user = mysqli_fetch_array($users);
+    $user = mysqli_fetch_assoc($users);
 
     $payments_resume = "SELECT "
             . "u.pays - SUM(amount) AS pago_pendiente, SUM(amount) AS total_pagos, u.pays AS total_a_pagar "
@@ -32,7 +32,7 @@ if ($count > 0) {
 
     $resume_result = $link->query($payments_resume);
     if (mysqli_num_rows($resume_result) > 0) {
-        $resume = mysqli_fetch_array($resume_result);
+        $resume = mysqli_fetch_assoc($resume_result);
         $user['pending'] = $resume['pago_pendiente'] === null ? '0' : $resume['pago_pendiente'];
         $user['paid'] = $resume['total_pagos'] === null ? '0' : $resume['total_pagos'];
     } else {
