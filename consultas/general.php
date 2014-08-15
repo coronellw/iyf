@@ -124,6 +124,14 @@
                                                 <span class="glyphicon glyphicon-usd"></span>
                                             </a>
 
+                                            <?php if (isset($_SESSION['user']) && ($_SESSION['user']['id_usertype'] < 3)) { ?>
+                                                <a href="#" 
+                                                    onclick="deleteUser(<?php echo $detail['id_user'] ?>)"
+                                                    title="Borrar usuario">
+                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                </a>
+                                            <?php } ?>
+
                                         </td>
                                     </tr>
                                 <?php } ?>

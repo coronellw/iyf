@@ -21,9 +21,7 @@ $query = "SELECT "
         . " FROM "
         . "countries c, users u, headquarters h "
         . "WHERE "
-        . "u.id_country = c.id_country AND h.id_headquarter = u.id_headquarters AND u.id_modality IN " . $modalities . " AND (u.id_user = '" . $id_user . "'"
-        . " OR u.names like '%" . $id_user . "%' OR u.parent_names like '%" . $id_user . "%' OR u.maternal_name like '%" . $id_user . "%'"
-        . " ) LIMIT 1;"
+        . "u.id_country = c.id_country AND h.id_headquarter = u.id_headquarters AND u.id_modality IN " . $modalities . " AND u.id_user = " . $id_user . " LIMIT 1;"
         or die("Error " . mysqli_error($link));
 
 

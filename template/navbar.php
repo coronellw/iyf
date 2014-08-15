@@ -39,7 +39,7 @@
                             <li class="divider"></li>
                             <li><a href="#">Estad&iacute;sticas</a></li>
                             <li class="divider"></li>
-                            <li><a href="#">Asistencias</a></li>
+                            <li><a href="/consultas/asistentes.php">Asistencias</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -48,7 +48,7 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="#">Perfil</a></li>
-                            <li><a href="#">Otros</a></li>
+                            <li><a href="/users/intercambiar.php">Intercambios</a></li>
                             <?php if (isset($_SESSION['user']) && $_SESSION['user']['id_usertype'] < 2) { ?>
                                 <li class="divider"></li>
                                 <li><a href="/sysparam/index.php">Configuración</a></li>

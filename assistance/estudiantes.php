@@ -5,23 +5,6 @@
         <?php include '../template/_head.php' ?>
     </head>
     <body>
-        <!-- Modal -->
-        <div class="modal fade" id="estudianteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">Datos de asistencia</h4>
-              </div>
-              <div class="modal-body">
-                
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-              </div>
-            </div>
-          </div>
-        </div>
         <div class="container-fluid">
             <center>
                 <?php
@@ -79,10 +62,30 @@
                                 <span id="mail"></span>
                             </span>
                         </div>
-
-                        <span>
-                            <button id="btnCnf" type="button" class="btn btn-primary hidden">Confirmar asistencia</button>
+                        <hr />
+                        <span id="btnCnf" class="row hidden">
+                            <button type="button" class="btn btn-primary">Confirmar asistencia</button>
                         </span>
+                        <div id="groupInfo" class="row">
+                            <div class="row">
+                                <span class="col-md-6 text-right">
+                                    <label for="grupo">Grupo: </label>
+                                </span>
+                                <span class="col-md-6 text-left">
+                                    <span id="grupo"></span>
+                                </span>
+                            </div>
+
+                            <div class="row">
+                                <span class="col-md-6 text-right">
+                                    <label for="maestro">Maestro: </label>
+                                </span>
+                                <span class="col-md-6 text-left">
+                                    <span id="maestro"></span>
+                                </span>
+                            </div>
+                        </div>
+
                     </div>
                     <?php
                 } else {

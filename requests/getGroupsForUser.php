@@ -12,6 +12,7 @@ $id_user = filter_input(INPUT_GET, "user");
 
 
 function updateUser($id_user, $id_group){
+    global $link;
     $response = array();
     $qu_user = "UPDATE users SET id_group = " . $id_group . ", checked = 1 WHERE id_user = " . $id_user or die("Error ".mysqli_error($link));
     $ru_user = $link->query($qu_user);
@@ -19,9 +20,9 @@ function updateUser($id_user, $id_group){
         $response['result'] = "ok";
         $response['info_msg'] = "The user was correctly assigned in an existing group";
         $response['group']=array();
-        $response['group']['id_group'] = $group['id_group'];
-        $response['group']['professor'] = $group['profesor'];
-        $response['group']['name'] = $group['name'];
+        $q_group = "SELECT g.id_group, g.name, CONCAT(u.names,' ', u.parent_names,' ', u.maternal_name) AS professor FROM groups g, users u WHERE g.group_master = u.id_user and g.id_group = $id_group";
+        $r_group = $link->query($q_group);
+        $response['group'] = mysqli_fetch_assoc($r_group);
     } else {
         $response['result'] = "fail";
         $response['query'] = $qu_user;
@@ -30,9 +31,9 @@ function updateUser($id_user, $id_group){
     return $response;
 }
 
-function createGroup($id_group_type){
+function createGroup($id_group_type, $id_user){
+    global $link;
     $response = array();
-
     # request a master with no group in order to create a new group, if no master available, then increase the tam_grupo sysparams by 1, and relaunch the assignGroup routine again
     # BUSCAR MAESTROS QUE NO TENGAN GRUPOS ASIGNADO
     
@@ -64,7 +65,7 @@ function createGroup($id_group_type){
             $group_name = 'error';
         }
 
-        $qc_group = "INSERT INTO groups(`name`,`group_master`,`id_group_type`) VALUES (CONCAT($counted,$group_name), $id_master, $id_group_type)";
+        $qc_group = "INSERT INTO groups(`name`,`group_master`,`id_group_type`) VALUES (CONCAT('$counted','$group_name'), $id_master, $id_group_type)";
         $rc_group = $link->query($qc_group);
         if ($rc_group) {
             # SI EL GRUPO SE CREA CORRECTAMENTE, SE AGREGA EL USUARIO CON EL GRUPO Y ACABA EL PROCESO
@@ -72,7 +73,7 @@ function createGroup($id_group_type){
             $response['result'] = "ok";
             $response['id_group'] = $new_id_group;
             $response['group_master'] = $id_master;
-            $response['proffesor'] = $master['names']." ".$master['parent_names']." ".$master['maternal_name'];
+            $response['professor'] = $master['names']." ".$master['parent_names']." ".$master['maternal_name'];
             $response['name'] = $counted.$group_name;
             $response['id_group_type'] = $id_group_type;
         }else{
@@ -85,6 +86,7 @@ function createGroup($id_group_type){
         # query para verificar si hay maestros
         $qv_masters = "SELECT * FROM users u WHERE u.id_modality = 5 AND u.checked = 1";
         $rv_masters = $link->query($qv_masters);
+        
         if ($rv_masters) {
             if (mysqli_num_rows($rv_masters) > 0) {
                 # en efecto si hay maestros, pero a estas alturas, los maestros estan ya todos asignados a grupos
@@ -99,6 +101,10 @@ function createGroup($id_group_type){
                     $response['query'] = $q_increase_tam;
                     $response['error_msg'] = "Imposible incrementar tam_grupo" . mysqli_error($link);
                 }
+            } else {
+                $response['result'] = "fail";
+                $response['query'] = $qv_masters;
+                $response['error_msg'] = "No hay maestros disponibles. ";
             }
         }
     }
@@ -109,7 +115,7 @@ function assignGroup($id_user, $id_group_type){
     global $link;
     $response = array();
     # ESTE QUERY RETORNA LOS CURSOS QUE ESTEN POR DEBAJO DEL LIMITE DE ASISTENTES REGISTRADOS
-    $q_group = "SELECT g.*, count(*) as inscritos, CONCAT(u.names, ' ', u.parent_names, ' ', u.maternal_name) as profesor FROM groups g LEFT OUTER JOIN users u ON g.id_group = u.id_group WHERE g.id_group_type = $id_group_type GROUP BY g.id_group HAVING count(*) < (SELECT sp.value FROM sysparams sp where sp.key = 'tam_grupo') ORDER BY inscritos ASC LIMIT 1;";
+    $q_group = "SELECT g.*, (SELECT count(*) FROM users u1 WHERE u1.id_group = g.id_group) as inscritos, CONCAT(u.names, ' ', u.parent_names, ' ', u.maternal_name) as professor FROM groups g, users u WHERE g.group_master = u.id_user AND g.id_group_type = $id_group_type GROUP BY g.id_group HAVING inscritos < (SELECT sp.value FROM sysparams sp where sp.key = 'tam_grupo') ORDER BY inscritos ASC LIMIT 1;";
     $r_group = $link->query($q_group);
     
     if ($r_group && mysqli_num_rows($r_group) > 0) {
@@ -125,13 +131,12 @@ function assignGroup($id_user, $id_group_type){
         # PARA CONECTARLO CON EL NUEVO GRUPO RECIEN CREADO, SI REGRESA group QUIERE DECIR QUE SE INCREMENTO EL TAMAÑO DEL
         # GRUPO A TRAVES DE SYSPARAMS Y DE INMEDIATO VOLVIO A CORRER EL QUERY PARA ASIGNARLE UN CUPO EN UNO DE LOS GRUPOS 
         # QUE AHORA SI TENDRAN ESPACIO PARA ESTE ESTUDIANTE
-        $result = createGroup($id_group_type);
+        $result = createGroup($id_group_type, $id_user);
+
         if (isset($result["id_group"])) {
-            $response = updateUser($id_user, $new_group['id_group']);  
+            $response = updateUser($id_user, $result['id_group']);
         } else {
-            if (isset($result["group"])) {
-                $response = $result;
-            }
+            $response = $result;
         }
         
     }
@@ -174,13 +179,14 @@ if (mysqli_num_rows($result_user) > 0) {
 
                 if ($result_final && mysqli_num_rows($result_final) > 0) {
                     # SI EN EFECTO ES ASI, SE EJECUTA UNA RUTINA PARA ASIGNARLE UN GRUPO A ESTE USUARIO
-                    $response = assignGroup($id_user, $group['id_group_type']);
+                    $response['asignacion'] = assignGroup($id_user, $group['id_group_type']);
                     # GUARDAR EL USUARIO
                     $response['user'] = $user;
+                    
                 }
             } else {
                 # EL TIPO DE GRUPO NO POSEE NINGUN CRITERIO ASOCIADO POR LO TANTO NO SE EVALUA SI EL USUARIO CUMPLE CON LOS CRITERIOS
-                $response['info_msg'][] = 'No criterias were found for groups ' . $group['id_group_type'];
+                $response['info_msg'] = 'No criterias were found for groups ' . $group['id_group_type'];
             }
         }
         if (!isset($response['result'])) {

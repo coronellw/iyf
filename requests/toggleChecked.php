@@ -11,8 +11,10 @@ $result = $link->query($query);
 if ($result && (mysqli_num_rows($result) > 0)) {
     $user = mysqli_fetch_array($result);
     if ($user['checked'] === '1') {
+        $response['new_status'] = 0;
         $query = "UPDATE users SET checked = 0 WHERE id_user = $id_user";
     } else {
+        $response['new_status'] = 1;
         $query = "UPDATE users SET checked = 1 WHERE id_user = $id_user";
     }
     $query = $query or die("Error " . mysqli_error($link));

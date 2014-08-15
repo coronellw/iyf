@@ -414,6 +414,17 @@ function findUserRequest(options) {
     });
 }
 
+function findCustomUser(options) {
+    var url = "/requests/getCustomUser.php";
+    var respuesta = {};
+
+    return jQuery.ajax({
+        type: "GET",
+        url: url,
+        data: {id_user: options.id_user, format: "json", modalities: options.modalities}
+    });
+}
+
 function getMaestro(options) {
     findUserRequest(options).success(function(data) {
         var jsonData = JSON.parse(data);
@@ -432,13 +443,16 @@ function getMaestro(options) {
                 } else{
                     var sex = jsonData.user.genre === 'M'?'o':'a';
                     warningMsg(jsonData.user.names +" "+jsonData.user.parent_names+" "+jsonData.user.maternal_name +" ya ha sido confirmad"+sex+" como maestr"+sex);
+                    clickClose();
                 }
             } else{
                 errorMsg("No se encontro un maestro con esa información");
+                clickClose();
             };
         } else {
             console.log("not ok");
             errorMsg("unable to complete query");
+            clickClose();
         }
     });
     
@@ -454,20 +468,32 @@ function getEstudiante(options){
                 get("apellidos").innerHTML = jsonData.user.parent_names + " " + jsonData.user.maternal_name;
                 get("sede").innerHTML = jsonData.user.sede;
                 get("mail").innerHTML = jsonData.user.email;
-                jQuery("#btnCnf").toggle(false);
                 jQuery("#btnCnf").click(function(){});
 
                 if (jsonData.user.checked === '0') {
-                    jQuery("#btnCnf").click(function(){ confirmarAsistenciaEstudiante(jsonData.user.id_user); }); 
-                    jQuery("#btnCnf").toggle(true);
+                    jQuery("#btnCnf").click(function(){ confirmarAsistenciaEstudiante(jsonData.user.id_user); });
+                    jQuery("#btnCnf").removeClass('hidden');
                 } else{
+                    jQuery("#btnCnf").addClass('hidden');
                     var sex = jsonData.user.genre === 'M'?'o':'a';
                     warningMsg(jsonData.user.names +" "+jsonData.user.parent_names+" "+jsonData.user.maternal_name +" ya ha sido confirmad"+sex+" como estudiante");
-                    setGroupInfo(jsonData.user.id_user);
-                    jQuery("#estudianteModal").modal();
+                    clickClose();
                 }
+                setGroupInfo(jsonData.user.id_group);
             } else{
                 warningMsg("No se encontro un estudiante con esa información");
+                clickClose();
+                get("id").innerHTML = "";
+                get("nombres").innerHTML = "";
+                get("apellidos").innerHTML = "";
+                get("sede").innerHTML = "";
+                get("mail").innerHTML = "";
+                get("grupo").innerHTML = "No encontrado";
+                get("maestro").innerHTML = "No encontrado";
+                jQuery("#btnCnf").addClass('hidden');
+                
+                jQuery("#btnCnf").click(function(){});
+                jQuery("btnCnf").addClass('hidden');
             };
         } else{
             console.log("not ok");
@@ -476,8 +502,23 @@ function getEstudiante(options){
     });
 }
 
-function setGroupInfo(id_user){
+function clickClose(){
+    timeout = setTimeout(function() {
+        jQuery(".close").click();
+    }, 2500);
+}
 
+function setGroupInfo(id_group){
+    getGroup(id_group).success(function(data){
+        var jsonData = JSON.parse(data);
+        if (jsonData.result === "ok") {
+            get("grupo").innerHTML = jsonData.group.name;
+            get("maestro").innerHTML = jsonData.group.professor;
+        } else{
+            get("grupo").innerHTML = "No encontrado";
+            get("maestro").innerHTML = "No encontrado";
+        };
+    });
 }
 
 function getGroups(id_user) {
@@ -614,16 +655,28 @@ function toggleChecked(id_user){
     });
 }
 
-function confirmarAsistenciaMaestro(id_user){
+function confirmarAsistenciaEstudiante(id_user){
     asignarGrupo(id_user).success(function(data){
         jsonData = JSON.parse(data);
         if (jsonData.result === "ok") {
             successMsg("El esutidante ha sido confirmado");
-            jQuery("#estudianteModal").modal();
+            setGroupInfo(jsonData.asignacion.group.id_group);
         } else{
-            errorMsg("Al parecer hubo un error al confirmar al estudiante, contacte al supervisor y/o administrador del sistema. HINT: "+ jsonData.error_msg+". "+jsonData.info_msg)
+            errorMsg("Al parecer hubo un error al confirmar al estudiante, contacte al supervisor y/o administrador del sistema. HINT: "+ jsonData.error_msg+". "+jsonData.info_msg);
         };
-        jQuery("#maestroModal").modal('toggle');
+
+        clickClose();
+    });
+}
+function confirmarAsistenciaMaestro(id_user){
+    toggleChecked(id_user).success(function(data){
+        jsonData = JSON.parse(data);
+        if (jsonData.result === "ok") {
+            successMsg("El maestro ha sido confirmado");
+        } else{
+            errorMsg("No se pudo confirmar al maestro, contacte al supervisor y/o administrador del sistema. HINT: "+ jsonData.error_msg+". "+jsonData.info_msg);
+        };
+        clickClose();
     });
 }
 
@@ -635,10 +688,39 @@ function asignarGrupo(id_user){
     });
 }
 
+// RETORNA EL GRUPO A PARTIR DEL ID DEL USUARIO
 function getGrupo(id_user){
     return jQuery.ajax({
         type: "GET",
         url: "/requests/getGroupInfo.php",
         data: {user: id_user}
     });
+}
+
+// RETRONA LA INFORMACION DEL GRUPO A PARTIR DEL ID DEL GRUPO
+function getGroup(id_group){
+    return jQuery.ajax({
+        type: "GET",
+        url: "/requests/getGroup.php",
+        data: {group: id_group}
+    });   
+}
+
+// BORRA UN USUARIO BASADO EN SU ID
+function deleteUser(id_user){
+    var k = confirm('Seguro que desa borrar este usuario del sistema?');
+    if (k) {
+        return jQuery.ajax({
+            type: "GET",
+            url: "/requests/deleteUser.php",
+            data: {user: id_user}
+        }).success(function(data){
+            var jsonData = JSON.parse(data);
+            if (jsonData.result === "ok") {
+                infoMsg(jsonData.info_msg);
+            } else{
+                errorMsg("No se pudo borrar el usuario. HINT: "+ jsonData.error_msg);
+            };
+        });
+    }
 }

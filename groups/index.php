@@ -66,7 +66,6 @@
                                         </td>
 
                                         <td>
-                                            <a href="#">Editar</a>
                                             <a href="/groups/view.php?group=<?php echo $detail['id'] ?>">Ver</a>
                                         </td>
                                     </tr>

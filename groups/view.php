@@ -52,7 +52,6 @@
                                     <th>Nombre completo</th>
                                     <th>Edad</th>
                                     <th>Sexo</th>
-                                    <th>Opciones</th>
                                 </tr>
                             </thead>
                             <tbdoy>
@@ -71,10 +70,6 @@
                                         </td>
                                         <td>
                                             <?php echo $detail['sexo'] ?>
-                                        </td>
-
-                                        <td>
-                                            <a href="#">Eliminar</a>
                                         </td>
                                     </tr>
                                 <?php } ?>
