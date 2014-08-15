@@ -154,11 +154,6 @@ function requestRegistration() {
         validations.errors.push({msg: "Usted debe leer y aceptar el reglamento para poder asistir al campamento", title: "Reglamento"});
     }
 
-//    console.log("{\nname: " + name + ",\nparent_name: " + parent_name + ",\nmaternal_name:" + maternal_name + ",\nemail: "
-//            + email + ",\ngenre: " + genre + ",\neducation: " + scholarity + ",\nid_country: " + id_country +
-//            ",\nid_city:" + id_city + ",\nid_hq: " + id_hq + ",\nemail: " + email + ",\nid_modality: " + id_modality +
-//            ",\nid_publicity: " + id_publicity + ",\nhosted: " + hosted + ",\nassistance: " + assistance +
-//            ",\nprice: " + price + ",\nusername: " + username + ",\nusertype: " + usertype + ",\npassword: " + password + "\n}");
     if (validations.errors === "undefined" || validations.errors.length === 0) {
         jQuery.ajax({
             type: "POST",
@@ -194,6 +189,8 @@ function checkRequiredContacts(validations) {
     } else {
         if (isUnique(home)) {
             phones.push({type: "1", value: home});
+        } else {
+            errores.push({msg: "El contacto de casa ya esta registrado en los telefonos", title: "Contacto incorrecto"});
         }
     }
 
@@ -202,6 +199,8 @@ function checkRequiredContacts(validations) {
     } else {
         if (isUnique(cell)) {
             phones.push({type: "2", value: cell});
+        } else {
+            errores.push({msg: "El contacto de celular ya esta registrado en los telefonos", title: "Celular incorrecto"});
         }
     }
 
@@ -217,6 +216,7 @@ function isUnique(number) {
             return false;
         }
     }
+    return true;
 }
 
 function updateStates() {
@@ -717,6 +717,7 @@ function deleteUser(id_user){
         }).success(function(data){
             var jsonData = JSON.parse(data);
             if (jsonData.result === "ok") {
+                location.reload();
                 infoMsg(jsonData.info_msg);
             } else{
                 errorMsg("No se pudo borrar el usuario. HINT: "+ jsonData.error_msg);

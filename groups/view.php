@@ -12,10 +12,25 @@
                 if (isset($_SESSION['user'])) {
                     include '../db_info.php';
                     $id_group = filter_input(INPUT_GET, "group");
-                    $q_group = "SELECT g.*, u.names as nombre, u.parent_names as apellido1, u.maternal_name as apellido2 FROM groups g, users u WHERE g.id_group = $id_group AND u.id_user = g.group_master" or die("Error " . mysqli_error($link));
+                    $q_group = "SELECT g.*, CONCAT(u.names,' ', u.parent_names,' ', u.maternal_name) as maestro, gt.name as tipo, 
+                                (SELECT count(*) FROM users u1 WHERE u1.id_group = g.id_group) as qty
+                        FROM 
+                            groups g, users u, group_types gt
+                        WHERE 
+                            gt.id_group_type = g.id_group_type and
+                            g.id_group = $id_group AND u.id_user = g.group_master" or die("Error " . mysqli_error($link));
                     $r_group = $link->query($q_group);
 
-                    $q_asistentes = "SELECT u.id_user, u.names as nombre, u.parent_names as apellido1, u.maternal_name as apellido2, (YEAR(CURDATE())-YEAR(born)) - (RIGHT(CURDATE(),5)<RIGHT(born,5)) as age, genre as sexo FROM users u WHERE id_group = $id_group ORDER BY age ASC" or die("Error " . mysqli_error($link));
+                    $q_asistentes = "SELECT 
+                                        u.id_user, u.names as nombre, u.parent_names as apellido1, u.maternal_name as apellido2, (YEAR(CURDATE())-YEAR(born)) - (RIGHT(CURDATE(),5)<RIGHT(born,5)) as age, 
+                                        genre as sexo, (SELECT value FROM contacts c, contact_user cu WHERE c.id_contact = cu.id_contact and cu.id_user = u.id_user and c.type = 2 LIMIT 1) as celular,
+                                        h.name as sede, m.name as modalidad, hosted, s.name as escolaridad
+                                    FROM 
+                                        users u, modalities m, headquarters h, scolarships s
+                                    WHERE 
+                                        u.id_modality = m.id_modality and
+                                        u.id_headquarters = h.id_headquarter and
+                                        u.scolarship = s.id_scolarship and id_group = $id_group ORDER BY age ASC" or die("Error " . mysqli_error($link));
                     $r_asistentes = $link->query($q_asistentes);
                     ?>
                     <h3>Grupo</h3>
@@ -26,21 +41,43 @@
                     
                     <?php if ($r_group) { 
                         $group = mysqli_fetch_assoc($r_group); ?>
-                        <div class="col-md-6 col-md-offset-3">
+                        <div class="col-md-8 col-md-offset-2">
                             <div class="row">
                                 <span class="col-md-6">
-                                    <label>Maestro</label>
+                                    <span class="col-md-6">
+                                        <label>Maestro: </label>
+                                    </span>
+                                    <span class="col-md-6">
+                                        <?php echo $group['maestro'] ?>
+                                    </span>
                                 </span>
+
                                 <span class="col-md-6">
-                                    <?php echo $group['nombre'] . " " . $group['apellido1'] . " " . $group['apellido2'] ?>
+                                    <span class="col-md-6">
+                                        <label>Nombre del grupo: </label>
+                                    </span>
+                                    <span class="col-md-6">
+                                        <?php echo $group['name'] ?>
+                                    </span>
                                 </span>
                             </div>
                             <div class="row">
                                 <span class="col-md-6">
-                                    <label>Nombre del grupo</label>
+                                    <span class="col-md-6">
+                                        <label>Tipo: </label>
+                                    </span>
+                                    <span class="col-md-6">
+                                        <?php echo $group['tipo'] ?>
+                                    </span>
                                 </span>
+
                                 <span class="col-md-6">
-                                    <?php echo $group['name'] ?>
+                                    <span class="col-md-6">
+                                        <label>Inscritos: </label>
+                                    </span>
+                                    <span class="col-md-6">
+                                        <?php echo $group['qty'] ?>
+                                    </span>
                                 </span>
                             </div>        
                         </div>
@@ -50,8 +87,12 @@
                                 <tr>
                                     <th>Código</th>
                                     <th>Nombre completo</th>
+                                    <th>Celular</th>
                                     <th>Edad</th>
                                     <th>Sexo</th>
+                                    <th>Sede</th>
+                                    <th>Nivel Escolar</th>
+                                    <th>Hospedaje</th>
                                 </tr>
                             </thead>
                             <tbdoy>
@@ -66,10 +107,32 @@
                                         </td>
                                         
                                         <td>
+                                            <?php echo $detail['celular'] ?>
+                                        </td>
+                                        
+                                        <td>
                                             <?php echo $detail['age'] ?>
                                         </td>
+
                                         <td>
                                             <?php echo $detail['sexo'] ?>
+                                        </td>
+                                        
+                                        <td>
+                                            <?php echo $detail['sede'] ?>
+                                        </td>
+                                        
+                                        <td>
+                                            <?php echo $detail['escolaridad'] ?>
+                                        </td>
+
+                                        <td>
+                                            <?php if ($detail['hosted'] === "1") {
+                                                    echo "Si";
+                                                }else {
+                                                    echo "No";
+                                                }
+                                            ?>
                                         </td>
                                     </tr>
                                 <?php } ?>

@@ -114,14 +114,6 @@
                                                 <span class="glyphicon glyphicon-edit"></span>
                                             </a>
 
-
-                                            <a href="/users/view.php?user=<?php echo $detail['id_user'] ?>" title="imprimir">
-                                                <span class="glyphicon glyphicon-print"></span>
-                                            </a>
-
-
-                                            <a href="/payments/create.php?user=<?php echo $detail['id_user'] ?>" title="hacer pago">
-                                                <span class="glyphicon glyphicon-usd"></span>
                                             </a>
 
                                             <?php if (isset($_SESSION['user']) && ($_SESSION['user']['id_usertype'] < 3)) { ?>

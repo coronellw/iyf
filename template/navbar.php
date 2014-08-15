@@ -37,7 +37,7 @@
                             <li><a href="/consultas/general.php">General</a></li>
                             <li><a href="/consultas/payment.php">Pagos</a></li>
                             <li class="divider"></li>
-                            <li><a href="#">Estad&iacute;sticas</a></li>
+                            <li><a href="/consultas/universidades.php">Dashboard universidades</a></li>
                             <li class="divider"></li>
                             <li><a href="/consultas/asistentes.php">Asistencias</a></li>
                         </ul>
@@ -48,7 +48,8 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="#">Perfil</a></li>
-                            <li><a href="/users/intercambiar.php">Intercambios</a></li>
+                            <!-- /users/intercambiar.php -->
+                            <li><a href="#">Intercambios</a></li>
                             <?php if (isset($_SESSION['user']) && $_SESSION['user']['id_usertype'] < 2) { ?>
                                 <li class="divider"></li>
                                 <li><a href="/sysparam/index.php">Configuración</a></li>
