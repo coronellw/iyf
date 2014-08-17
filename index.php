@@ -15,8 +15,7 @@
                 ?>
             <h3>Que es IYF?</h3>
             <p>IYF es...</p>
-            <a href="#" onclick="updatePhones()">Actualizar concatos</a>
-                <?php
+            php
             }
             ?>
         </div>
