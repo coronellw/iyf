@@ -37,9 +37,10 @@
                             <li><a href="/consultas/general.php">General</a></li>
                             <li><a href="/consultas/payment.php">Pagos</a></li>
                             <li class="divider"></li>
-                            <li><a href="/consultas/universidades.php">Dashboard universidades</a></li>
+                            <li><a href="/consultas/universidades.php">Dashboard</a></li>
                             <li class="divider"></li>
                             <li><a href="/consultas/asistentes.php">Asistencias</a></li>
+                            <li><a href="/sysuser/">Usuarios</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">

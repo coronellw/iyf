@@ -24,6 +24,22 @@
                                     headquarters h;" or die("Error " . mysqli_error($link));
 
                     $result = $link->query($query);
+                    $q_totales = "SELECT 
+                                    (SELECT count(*) from users u) as registrados,
+                                    (SELECT count(*) from users u WHERE date(born) between '1998-01-01' AND '2002-12-31') AS junior,
+                                    (SELECT count(*) from users u WHERE date(born) between '1981-01-01' AND '1997-12-31') AS joven,
+                                    (SELECT count(*) from users u WHERE date(born) between '1969-01-01' AND '1980-12-31') AS senior,
+                                    (SELECT count(*) from users u WHERE date(born) between '1900-01-01' AND '1968-12-31') AS veteranos,
+                                    (SELECT count(*) from users u WHERE u.genre = 'M') as hombres,
+                                    (SELECT count(*) from users u WHERE u.genre = 'F') as mujeres
+                                FROM 
+                                    dual;" or die("Error " . mysqli_error($link));
+                    $r_totales = $link->query($q_totales);
+                    if ($r_totales) {
+                        if (mysqli_num_rows($r_totales)>0) {
+                            $total = mysqli_fetch_assoc($r_totales);
+                        }
+                    }
                     ?>
                     <h3>Universidad</h3>
                     <p>A continuación, se puede observar las universidades y la distribución</p>
@@ -47,6 +63,24 @@
                                     <th>%</th>
                                 </tr>
                             </thead>
+                            <tfoot>
+                                <tr>
+                                    <td><strong>TOTALES</strong></td>
+                                    <td><strong><?php echo $total['registrados'] ?></strong></td>
+                                    <td><strong><?php echo $total['junior'] ?></strong></td>
+                                    <td><?php echo number_format(($total['junior']/$total["registrados"])*100,2,'.','')."%" ?></td>
+                                    <td><strong><?php echo $total['joven'] ?></strong></td>
+                                    <td><?php echo number_format(($total['joven']/$total["registrados"])*100,2,'.','')."%" ?></td>
+                                    <td><strong><?php echo $total['senior'] ?></strong></td>
+                                    <td><?php echo number_format(($total['senior']/$total["registrados"])*100,2,'.','')."%" ?></td>
+                                    <td><strong><?php echo $total['veteranos'] ?></strong></td>
+                                    <td><?php echo number_format(($total['veteranos']/$total["registrados"])*100,2,'.','')."%" ?></td>
+                                    <td><strong><?php echo $total['hombres'] ?></strong></td>
+                                    <td><?php echo number_format(($total['hombres']/$total["registrados"])*100,2,'.','')."%" ?></td>
+                                    <td><strong><?php echo $total['mujeres'] ?></strong></td>
+                                    <td><?php echo number_format(($total['mujeres']/$total["registrados"])*100,2,'.','')."%" ?></td>
+                                </tr>
+                            </tfoot>
                             <tbdoy>
                                 <?php while ($detail = mysqli_fetch_array($result)) { ?>
                                     <tr>

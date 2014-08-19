@@ -37,7 +37,7 @@ if ($users) {
     }
 } else {
     $response['result'] = "fail";
-    $response['query']=$query;
     $response['error_msg'] = mysqli_error($link);
 }
+$response['query']=$query;
 echo json_encode($response);

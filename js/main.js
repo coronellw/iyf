@@ -183,6 +183,7 @@ function checkRequiredContacts(validations) {
     var home = get('home_phone').value;
     var cell = get('cell_phone').value;
     var errores = [];
+    var warnings = [];
 
     if (home.length === 0 || isNaN(home)) {
         errores.push({msg: "El contacto de casa no es un número válido", title: "Contacto incorrecto"});
@@ -190,7 +191,7 @@ function checkRequiredContacts(validations) {
         if (isUnique(home)) {
             phones.push({type: "1", value: home});
         } else {
-            errores.push({msg: "El contacto de casa ya esta registrado en los telefonos", title: "Contacto incorrecto"});
+            warnings.push({msg: "El contacto de casa ya esta registrado en los telefonos", title: "Contacto incorrecto"});
         }
     }
 
@@ -200,11 +201,12 @@ function checkRequiredContacts(validations) {
         if (isUnique(cell)) {
             phones.push({type: "2", value: cell});
         } else {
-            errores.push({msg: "El contacto de celular ya esta registrado en los telefonos", title: "Celular incorrecto"});
+            warnings.push({msg: "El contacto de celular ya esta registrado en los telefonos", title: "Celular incorrecto"});
         }
     }
 
     validations.errors = errores;
+    validations.warnings = warnings;
     console.log("Returning: " + validations.errors + "\nFound errors:" + errores);
     return validations;
 }
@@ -416,7 +418,6 @@ function findUserRequest(options) {
 
 function findCustomUser(options) {
     var url = "/requests/getCustomUser.php";
-    var respuesta = {};
 
     return jQuery.ajax({
         type: "GET",

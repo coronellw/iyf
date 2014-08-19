@@ -68,6 +68,14 @@ thead tr th {
     text-align: center;
 }
 
+tfoot tr td {
+    background-color: #999;
+    border: 1px solid black;
+    border-top: 3px solid black;
+    color: #3c763d;
+    padding: 2px 5px;
+}
+
 table.custom_table {
     border: 1px solid black;
     border-collapse: collapse;
