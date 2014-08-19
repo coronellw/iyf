@@ -65,7 +65,7 @@
                                 <div class="form-group">
                                     <label class="col-md-4 col-md-offset-2 control-label" for="username">Nombre de usuario:</label>
                                     <div class="col-md-4">
-                                        <input id="username" class="form-control" value="<?php echo $user['usrnm'] ?>" disabled>
+                                        <input id="username" class="form-control" disabled>
                                     </div>
                                 </div>
     
@@ -83,16 +83,9 @@
                                 </div>
     
                                 <div class="form-group">
-                                    <label class="col-md-4 col-md-offset-2 control-label" for="password">Contraseña actual:</label>
+                                    <label class="col-md-4 col-md-offset-2 control-label" for="newPassword">Contraseña:</label>
                                     <div class="col-md-4">
-                                        <input id="password" class="form-control" type="password" disabled >
-                                    </div>
-                                </div>
-    
-                                <div class="form-group">
-                                    <label class="col-md-4 col-md-offset-2 control-label" for="password">Nueva contraseña:</label>
-                                    <div class="col-md-4">
-                                        <input id="password" class="form-control" type="password" disabled>
+                                        <input id="newPassword" class="form-control" type="password" disabled>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -103,7 +96,7 @@
                                 </div>
                             </form>
                             <div class="row">
-                                <a href="#" class="btn btn-primary">Crear usuario</a>
+                                <a href="#" id="sndBtn" class="btn btn-primary">Crear usuario</a>
                             </div>
                         </div>
                     </div>

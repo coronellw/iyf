@@ -17,7 +17,7 @@ if (!isset($modalities)) {
 
 $query = "SELECT "
         . "u.id_user, u.names, u.parent_names, u.maternal_name, c.name as country_name, u.assistance, u.pays, u.genre, u.born, h.name as sede, "
-        . "u.scolarship, u.id_group, u.id_usertype, u.id_modality, u.registered, u.id_headquarters, u.hosted, u.id_city, u.checked, email"
+        . "u.scolarship, u.id_group, u.id_usertype, u.id_modality, u.registered, u.id_headquarters, u.hosted, u.id_city, u.checked, email, u.usrnm"
         . " FROM "
         . "countries c, users u, headquarters h "
         . "WHERE "

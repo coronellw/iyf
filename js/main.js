@@ -340,6 +340,16 @@ function printErrors(errors) {
     errorMsg(message);
 }
 
+function printErrors(warnings) {
+    var message = "<ul>";
+    for (var index in warnings) {
+        var current = warnings[index];
+        message += "<li>" + current.msg + "</li>";
+    }
+    message += "</ul>";
+    warningMsg(message);
+}
+
 function findUser() {
     var id_user = jQuery("#user_id").val();
     var url = "/requests/getUser.php";
@@ -725,4 +735,12 @@ function deleteUser(id_user){
             };
         });
     }
+}
+
+function usernameUpdate(options){
+    return jQuery.ajax({
+        type: "POST",
+        url: "/requests/updateUsername.php",
+        data: {id_user: options.id_user, override: options.override, userInfo: options.userInfo}
+    });
 }

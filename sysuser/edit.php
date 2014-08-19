@@ -11,8 +11,8 @@
             <center>
                 <?php
                 include '../template/navbar.php';
-                if (isset($_SESSION['user']) && $_SESSION['user']['id_usertype'] < 3) {
-                    $id_user = filter_input(INPUT_GET, "user");
+                $id_user = filter_input(INPUT_GET, "user");
+                if ((isset($_SESSION['user']) && $_SESSION['user']['id_usertype'] < 3)||$_SESSION['user']['id_user']==$id_user) {
                     
                     $query = "SELECT u.usrnm, u.id_usertype FROM users u, usertypes ut 
                             WHERE u.id_user = $id_user AND usrnm is not null AND u.id_usertype = ut.id_usertype" or die("Error " . mysqli_error($link));
@@ -33,6 +33,8 @@
                     ?>
                     <h3>Edición</h3>
                     <p>Por favor realice sus cambios y guarde la información necesaria.</p>
+                    <a href="index.php">Regresar al listado de usuarios del sistema</a>
+                    <br>
                     <br>
                     <?php if (isset($user)) { ?>
                         <div class="col-md-6 col-md-offset-3">
@@ -60,7 +62,7 @@
                                     </div>
                                 </div>
 
-                                <?php if (isset($_SESSION['user']) && $_SESSION['user']['id_usertype'] > 1){ ?>
+                                <?php if (isset($_SESSION['user']) && $_SESSION['user']['id_usertype'] !== "1"){ ?>
                                     <div class="form-group">
                                         <label class="col-md-4 col-md-offset-2 control-label" for="password">Contraseña actual:</label>
                                         <div class="col-md-4">
@@ -70,9 +72,9 @@
                                 <?php } ?>
 
                                 <div class="form-group">
-                                    <label class="col-md-4 col-md-offset-2 control-label" for="password">Nueva contraseña:</label>
+                                    <label class="col-md-4 col-md-offset-2 control-label" for="newPassword">Nueva contraseña:</label>
                                     <div class="col-md-4">
-                                        <input id="password" class="form-control" type="password" >
+                                        <input id="newPassword" class="form-control" type="password" >
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -80,6 +82,10 @@
                                     <div class="col-md-4">
                                         <input id="verification" class="form-control" type="password" >
                                     </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <button class="btn btn-primary">Guardar cambios</button>
                                 </div>
                             </form>    
                         </div>
