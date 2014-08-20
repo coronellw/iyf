@@ -38,6 +38,7 @@
                             <li><a href="/consultas/payment.php">Pagos</a></li>
                             <li class="divider"></li>
                             <li><a href="/consultas/universidades.php">Dashboard</a></li>
+                            <li><a href="/consultas/registrados.php">Registrados</a></li>
                             <li class="divider"></li>
                             <li><a href="/consultas/asistentes.php">Asistencias</a></li>
                             <?php if (isset($_SESSION['user']) && $_SESSION['user']['id_usertype'] < 3) { ?>

@@ -46,6 +46,13 @@
                     <h1>Registro de usuarios</h1>
                     <h2>Llene los campos para hacer el registro de un usuario</h2>
                     <span class="row">
+                        <input type="hidden" id="registered_by" 
+                            value=" <?php if (isset($_SESSION['user'])) {
+                                        echo $_SESSION['user']['id_user'];
+                                    }else { 
+                                        echo '100002';
+                                    }?>
+                        ">
                         <table>
                             <tr colspan="2" ><h3>Informacion personal</h3></tr>
                             <tr>

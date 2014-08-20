@@ -155,6 +155,7 @@ function requestRegistration() {
     }
 
     var url = "/requests/createUser.php";
+    var msg = "";
 
     if (validations.errors === "undefined" || validations.errors.length === 0) {
         jQuery.ajax({
@@ -167,13 +168,17 @@ function requestRegistration() {
         }).success(function(data) {
             var datos = JSON.parse(data);
             if (datos.result === "ok") {
-                console.log("The user was saved on the data base");
-
-                if (datos.event_started == true) {
+                var registerer = get('registered_by').value;
+                alert(registerer+" and event started ="+datos.event_started);
+                if (datos.event_started == true && registerer !== '100002') {
+                    makePayment(datos.id_user, price, 2, registerer).success(function(answer){
+                        var response = JSON.parse(answer);
+                        msg = response.info_msg || response.error_msg;
+                    });
                     getGroupForUser(datos.id_user).success(function(answer){
                         var response = JSON.parse(answer);
                         if (response.result === "ok") {
-                            alert("Maestro asignado: "+ response.asignacion.group.professor+"\nNombre del grupo: "+response.asignacion.group.name);
+                            alert(msg+"\nMaestro asignado: "+ response.asignacion.group.professor+"\nNombre del grupo: "+response.asignacion.group.name);
                         } else {
                             alert("No se ha podido asignar un grupo, verifique con su superior");
                         }
@@ -775,4 +780,15 @@ function requestSysUserDelete(id_user){
         url: "/requests/deleteSysUser.php",
         data: {user: id_user}
     });
+}
+
+function makePayment(registered_to, payment, payment_method, registered_by){
+    return jQuery.ajax({
+            type: "POST",
+            url: "/requests/createPayment.php",
+            data: {payer: registered_to,
+                amount: payment,
+                payment_type: payment_method,
+                registerer: registered_by}
+        });
 }
