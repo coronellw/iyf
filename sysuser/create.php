@@ -69,18 +69,25 @@
                                     </div>
                                 </div>
     
-                                <div class="form-group">
-                                    <label class="col-md-4 col-md-offset-2 control-label">Tipo de usuario:</label>
-                                    <div class="col-md-4">
-                                        <select id="usertype" class="form-control" disabled>
-                                            <?php while($ut = mysqli_fetch_assoc($usertypes)){ ?>
-                                                <option value="<?php echo $ut['id_usertype'] ?>">
-                                                    <?php echo $ut['name'] ?>
-                                                </option>
-                                            <?php } ?>
-                                        </select>
+                                <?php if (isset($_SESSION['user']) && $_SESSION['user']['id_usertype'] < 3){ ?>
+                                    <div class="form-group">
+                                        <label class="col-md-4 col-md-offset-2 control-label">Tipo de usuario:</label>
+                                        <div class="col-md-4">
+                                            <select id="usertype" class="form-control">
+                                                <?php while($ut = mysqli_fetch_assoc($usertypes)){ 
+                                                    if ($_SESSION['user']['id_usertype'] < 2 || $ut['id_usertype']!=="1") { ?>
+                                                        <option value="<?php echo $ut['id_usertype'] ?>"
+                                                            <?php if ($ut['id_usertype'] == $user['id_usertype']) { echo "selected"; } ?>>
+                                                            <?php echo $ut['name'] ?>
+                                                        </option>
+                                                <?php } 
+                                                }?>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
+                                <?php } else { ?>
+                                    <input type="hidden" id="usertype" value="<?php echo $user['id_usertype'] ?>">
+                                <?php } ?>
     
                                 <div class="form-group">
                                     <label class="col-md-4 col-md-offset-2 control-label" for="newPassword">Contraseña:</label>

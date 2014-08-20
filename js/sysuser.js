@@ -38,10 +38,10 @@ function findUserCandidate(){
 }
 
 function disableFields(){
-	get("nombres").innerHTML = "";
-	get("apellido1").innerHTML = "";
-	get("apellido2").innerHTML = "";
-	get("username").value = "";
+	jQuery("#nombres").html("");
+	jQuery("#apellido1").html("");
+	jQuery("#apellido2").html("");
+	jQuery("#username").val("");
 	jQuery("#password").val("");
 	jQuery("#verification").val("");
 
@@ -60,6 +60,7 @@ function requestUserCreation(id_user){
 	var errors = [];
 	var warnings = [];
 	var override = true;
+	var original = null;
 
 	if (username.length === 0) {
 		errors.push({msg: "El nombre de usuario es un requisito", type: "error"});
@@ -74,24 +75,53 @@ function requestUserCreation(id_user){
 	}
 
 	if (proof && typeof proof !== "undefined") {
-		override = true;
-		if (proof.length === 0) {
-			errors.push({msg: "Debe proporcionar la contraseña actual de este usuario, unicamente un administrador del sistema, puede prescindir de esta información", type: "error"});
+		override = false;
+		original = proof.value;
+		if (original.length === 0) {
+			errors.push({msg: "Debe proporcionar la contraseña actual de este usuario", type: "error"});
 		}
 	}
 
 	if (errors.length === 0) {
-		usernameUpdate({id_user: id_user, override: override, userInfo: {username: username, password: pwd, usertype: usertype, currentPassword: proof}})
+		usernameUpdate({id_user: id_user, override: override, userInfo: {username: username, password: pwd, usertype: usertype, currentPassword: original}})
 		.success(function(answer){
+			
 			var response = JSON.parse(answer);
 			if (response.result === "ok") {
 				disableFields();
-				successMsg("El usuario ha sido agregado correctamente a los usuarios del sistema!");
+				var loc = document.URL;
+				var res = loc.match(/edit\.php/g);
+				if (res && res.length > 0) {
+					location.href = "index.php";
+				} else{
+					location.reload();
+				}
+				successMsg("El usuario ha sido actualizado correctamente!");
 			}else{
-				errorMsg("Se ha encontrado un error al intentar modificar el usuario, HINT: "+ response.error_msg);
+				errorMsg("Se ha encontrado un error al intentar modificar el usuario, HINT: " + response.error_msg);
 			}
 		});
 	}else {
 		printErrors(errors);
 	}
 }
+
+function deleteSysUser(id_user){
+	var confirmed = confirm("Seguro que desea borrar este usaurio del sistema?");
+	if (confirmed) {
+		requestSysUserDelete(id_user).success(function(answer){
+			var response = JSON.parse(answer);
+			if (response!== 'undefined') {
+				if (response.result === "ok") {
+					location.reload();
+					infoMsg("Transacción completa, " + response.info_msg);
+				} else{
+					errorMsg("No se pudo eliminar ese usuario del sistema, HINT: "+response.error_msg);
+				}
+			}else {
+				errorMsg("Uncatched error");
+			}
+		});
+	}
+}
+

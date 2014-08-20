@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>IYF - Usuarios del sistema</title>
+        <script type="text/javascript" src="../js/sysuser.js"></script>
         <?php include '../template/_head.php';
             include '../db_info.php';
         ?>
@@ -47,7 +48,7 @@
                                         <?php echo $user['tipo'] ?>
                                     </td>
                                     <td>
-                                        <?php if ($_SESSION['user']['id_user'] !== $user['id_user']) { ?>
+                                        <?php if ($_SESSION['user']['id_user'] !== $user['id_user'] && $_SESSION['user']['id_usertype'] <= $user['id_usertype']) { ?>
                                             <a href="#" onclick="deleteSysUser(<?php echo $user['id_user'] ?>)" title="Borrar usuario">
                                                 <span class="glyphicon glyphicon-trash"></span>
                                             </a>

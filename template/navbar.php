@@ -40,7 +40,9 @@
                             <li><a href="/consultas/universidades.php">Dashboard</a></li>
                             <li class="divider"></li>
                             <li><a href="/consultas/asistentes.php">Asistencias</a></li>
-                            <li><a href="/sysuser/">Usuarios</a></li>
+                            <?php if (isset($_SESSION['user']) && $_SESSION['user']['id_usertype'] < 3) { ?>
+                                <li><a href="/sysuser/">Usuarios</a></li>
+                            <?php } ?>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -48,7 +50,7 @@
                             <?php echo $_SESSION['user']['names']; ?> <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Perfil</a></li>
+                            <li><a href="/sysuser/edit.php?user=<?php echo $_SESSION['user']['id_user'] ?>">Perfil</a></li>
                             <!-- /users/intercambiar.php -->
                             <li><a href="#">Intercambios</a></li>
                             <?php if (isset($_SESSION['user']) && $_SESSION['user']['id_usertype'] < 2) { ?>

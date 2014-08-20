@@ -744,3 +744,11 @@ function usernameUpdate(options){
         data: {id_user: options.id_user, override: options.override, userInfo: options.userInfo}
     });
 }
+
+function requestSysUserDelete(id_user){
+    return jQuery.ajax({
+        type: "POST",
+        url: "/requests/deleteSysUser.php",
+        data: {user: id_user}
+    });
+}
