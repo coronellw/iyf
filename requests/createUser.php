@@ -22,6 +22,7 @@ $price = filter_input(INPUT_POST, "price");
 $username = filter_input(INPUT_POST, "username");
 $password = filter_input(INPUT_POST, "password");
 $id_usertype = filter_input(INPUT_POST, "id_usertype");
+$response = array();
 
 function deterGroup() {
     return "1";
@@ -101,7 +102,20 @@ if ($id_user !== 0 && count($contacts) > 0) {
     }
 }
 
-$response = array();
+
+# Verificar si el evento ya empezo o no, para retornar started como true
+$q_check_date = "SELECT sp.key, sp.value FROM sysparams sp WHERE sp.key = 'fecha_evento' AND TIMESTAMP(sp.value, '00:00:00') <= now()";
+$r_check_date = $link->query($q_check_date);
+
+if ($r_check_date && mysqli_num_rows($r_check_date) > 0) {
+    $response['event_started'] = true;
+} else {
+    $response['event_started'] = false;
+    if (!$r_check_date) {
+        $response['warning_msg'] = "Unable to execute query -> ".$q_check_date;
+    }
+}
+
 $response['id_user'] = $id_user;
 if ($id_user !== 0) {
     $response['result'] = "ok";

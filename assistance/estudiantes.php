@@ -66,6 +66,7 @@
                         <span id="btnCnf" class="row hidden">
                             <button type="button" class="btn btn-primary">Confirmar asistencia</button>
                         </span>
+                        <br>
                         <div id="groupInfo" class="row">
                             <div class="row">
                                 <span class="col-md-6 text-right">

@@ -127,8 +127,10 @@ function requestRegistration() {
     var password;
     var password_confirmation;
 
-    if (get('register_system_user') !== null) {
-        if (get('register_system_user') !== 'undefined' && get('register_system_user').checked) {
+    var sysUser = get('register_system_user');
+
+    if (sysUser !== null) {
+        if (sysUser !== 'undefined' && sysUser.checked) {
             username = jQuery("#username").val();
             usertype = jQuery("#usertype").val();
             password = jQuery("#password").val();
@@ -148,11 +150,11 @@ function requestRegistration() {
         }
     }
 
-    var url = "/requests/createUser.php";
-
     if (!get('rules').checked) {
         validations.errors.push({msg: "Usted debe leer y aceptar el reglamento para poder asistir al campamento", title: "Reglamento"});
     }
+
+    var url = "/requests/createUser.php";
 
     if (validations.errors === "undefined" || validations.errors.length === 0) {
         jQuery.ajax({
@@ -166,7 +168,20 @@ function requestRegistration() {
             var datos = JSON.parse(data);
             if (datos.result === "ok") {
                 console.log("The user was saved on the data base");
-                location.href = "/users/view.php?user=" + datos.id_user;
+
+                if (datos.event_started == true) {
+                    getGroupForUser(datos.id_user).success(function(answer){
+                        var response = JSON.parse(answer);
+                        if (response.result === "ok") {
+                            alert("Maestro asignado: "+ response.asignacion.group.professor+"\nNombre del grupo: "+response.asignacion.group.name);
+                        } else {
+                            alert("No se ha podido asignar un grupo, verifique con su superior");
+                        }
+                        location.href = "/users/view.php?user=" + datos.id_user;
+                    });
+                }else{
+                    location.href = "/users/view.php?user=" + datos.id_user;
+                }
             } else {
                 get("alerts").innerHTML = '<div class="alert alert-danger" role="alert">El usuario no pudo ser creado en la base de datos, verifique su información. <br><strong>Hint:</strong> ' + datos.error_msg + '</div>';
             }
@@ -520,15 +535,16 @@ function clickClose(){
 }
 
 function setGroupInfo(id_group){
+    get("grupo").innerHTML = "No encontrado";
+    get("maestro").innerHTML = "No encontrado";
     getGroup(id_group).success(function(data){
         var jsonData = JSON.parse(data);
         if (jsonData.result === "ok") {
-            get("grupo").innerHTML = jsonData.group.name;
-            get("maestro").innerHTML = jsonData.group.professor;
-        } else{
-            get("grupo").innerHTML = "No encontrado";
-            get("maestro").innerHTML = "No encontrado";
-        };
+            if (jsonData.group !== "undefined") {
+                get("grupo").innerHTML = jsonData.group.name;
+                get("maestro").innerHTML = jsonData.group.professor;
+            }
+        }        
     });
 }
 
@@ -544,6 +560,14 @@ function getGroups(id_user) {
         }
     }).fail(function() {
         console.log("Unable to complete this request");
+    });
+}
+
+function getGroupForUser(id_user){
+    return jQuery.ajax({
+        type: "GET",
+        url: "/requests/getGroupsForUser.php",
+        data: {user: id_user}
     });
 }
 

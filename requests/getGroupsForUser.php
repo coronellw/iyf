@@ -165,6 +165,7 @@ if (mysqli_num_rows($result_user) > 0) {
                     . "WHERE "
                     . "gt.id_group_type = gtc.id_group_type AND c.id_criteria = gtc.id_criteria AND gt.id_group_type = " . $group['id_group_type'] . ";"
                     or die("Error " . mysqli_error($link));
+
             $result_criteria = $link->query($query_criterias);
             if ($result_criteria && mysqli_num_rows($result_criteria)>0) {
                 # RECORRE TODOS LOS CRITERIOS Y LOS UNE CON 'AND'
